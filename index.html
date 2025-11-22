@@ -70,7 +70,6 @@
     <div id="stores-list"></div>
 
     <script>
-        // Store websites
         const storeWebsites = {
             '7-Eleven': 'https://www.7-eleven.com.ph',
             'Alfamart': 'https://www.alfamart.com.ph',
@@ -89,11 +88,9 @@
             'S&R': 'https://www.snrshopping.com',
             'Metro Gaisano': 'https://www.metroretail.com.ph',
             'Gaisano': 'https://gaisanocapital.com',
-            'Landers': 'https://www.landers.ph',
-            'Local Store': 'https://www.google.com/search?q=local+store+philippines'
+            'Landers': 'https://www.landers.ph'
         };
 
-        // ALL 47 PRODUCTS — FULLY LISTED, NO SHORTCUTS, WITH PRICES FOR EVERY STORE INCLUDING DALI
         const mockProducts = {
             'Lucky Me! Pancit Canton (65g)': { avg: 12.00, stores: { '7-Eleven': 14.00, 'Alfamart': 13.00, 'Puregold': 11.00, 'Robinsons Supermarket': 12.00, 'SM Supermarket': 12.50, 'Dali Everyday Grocery': 10.00, 'Savemore': 11.50, 'Shopwise': 11.75, 'Walter Mart': 12.25, 'Rustan\'s': 13.50, 'S&R': 12.00, 'Metro Gaisano': 11.50, 'Gaisano': 11.00, 'South Supermarket': 12.00, 'Super Metro': 11.25, 'Prince Hypermart': 10.50, 'AllDay': 11.75, 'Lawson': 13.25, 'Circle K': 13.50, 'Uncle John\'s': 12.75, 'Budget Mart': 11.00 } },
             'Lucky Me! Beef Mami (65g)': { avg: 12.50, stores: { '7-Eleven': 14.50, 'Alfamart': 13.50, 'Puregold': 11.50, 'Robinsons Supermarket': 12.50, 'SM Supermarket': 12.80, 'Dali Everyday Grocery': 11.00, 'Savemore': 12.00, 'Shopwise': 12.25, 'Walter Mart': 12.75, 'Rustan\'s': 13.80, 'S&R': 12.50, 'Metro Gaisano': 12.00, 'Gaisano': 11.50, 'South Supermarket': 12.50, 'Super Metro': 11.75, 'Prince Hypermart': 11.00, 'AllDay': 12.25, 'Lawson': 13.75, 'Circle K': 14.00, 'Uncle John\'s': 13.25, 'Budget Mart': 11.75 } },
@@ -145,7 +142,7 @@
             'Ligo Sardines Green (155g)': { avg: 23.00, stores: { '7-Eleven': 25.00, 'Alfamart': 24.00, 'Puregold': 22.00, 'Robinsons Supermarket': 23.00, 'SM Supermarket': 23.50, 'Dali Everyday Grocery': 21.50, 'Savemore': 22.50, 'Shopwise': 22.75, 'Walter Mart': 23.25, 'Rustan\'s': 24.50, 'S&R': 23.00, 'Metro Gaisano': 22.50, 'Gaisano': 22.00, 'South Supermarket': 23.00, 'Super Metro': 22.25, 'Prince Hypermart': 21.50, 'AllDay': 22.75, 'Lawson': 24.25, 'Circle K': 24.50, 'Uncle John\'s': 23.75, 'Budget Mart': 22.25 } }
         };
 
-        let map, userLocation = {lat: 14.5995, lng: 120.9842};
+        let map, userLocation = {lat:14.5995, lng:120.9842};
         let nearbyStores = [];
 
         function initMap() {
@@ -165,11 +162,11 @@
                     document.getElementById('status').innerHTML = '<span class="loading"></span> Scanning real stores within 5km...';
                     searchNearbyStores();
                 }, () => {
-                    document.getElementById('status').textContent = 'Location blocked. Using Manila demo with 8 stores.';
+                    document.getElementById('status').textContent = 'Location access denied. Using Manila demo.';
                     searchNearbyStores();
                 });
             } else {
-                document.getElementById('status').textContent = 'No geolocation support. Using demo with 8 stores.';
+                document.getElementById('status').textContent = 'Geolocation not supported. Using demo.';
                 searchNearbyStores();
             }
         }
