@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PriceWatch - Nearby Price Comparator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <i class="fas fa-tag"></i> PriceWatch
+        </div>
+        <div class="location-badge" id="location-status">
+            <i class="fas fa-map-marker-alt"></i> <span id="user-coords">Locating...</span>
+        </div>
+    </nav>
+
+    <main>
+        <section class="search-box">
+            <h2>Find the Cheapest Price</h2>
+            <div class="input-group">
+                <input type="text" id="search-input" placeholder="What do you need? (e.g., Coke, Rice, Eggs)">
+                <button onclick="performSearch()"><i class="fas fa-search"></i> Compare</button>
+            </div>
+        </section>
+
+        <div id="scanner" class="hidden">
+            <div class="spinner"></div>
+            <p>Scanning nearby stores (Alfamart, Dali, 7-Eleven)...</p>
+        </div>
+
+        <section id="results-area" class="hidden">
+            <h3><i class="fas fa-list-ol"></i> Comparison Results</h3>
+            <div id="results-list">
+                </div>
+        </section>
+
+        <section class="store-browser">
+            <h3><i class="fas fa-store"></i> Browse Nearby Stores</h3>
+            <p class="subtitle">Click a store to see their catalog</p>
+            <div class="store-grid" id="store-grid">
+                </div>
+        </section>
+    </main>
+
+    <div id="store-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modal-store-name">Store Name</h2>
+            <p id="modal-store-distance">Distance: --</p>
+            <hr>
+            <div id="modal-store-items"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
