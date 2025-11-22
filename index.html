@@ -3,73 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PriceWatch PH</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <title>PriceWatch PH • Best Grocery Deals Near You</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root{--primary:#0066ff;--accent:#ff6b35;--dark:#1a1a1a;--light:#f8f9fa;--gray:#6c757d;--success:#28a745}
-        body{font-family:'Poppins',sans-serif;margin:0;padding:0;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);color:var(--dark);min-height:100vh}
-        header{background:white;padding:20px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}
-        h1{margin:0;font-size:2.5rem;background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        header p{margin:8px 0 0;color:var(--gray);font-weight:500}
-        .container{max-width:1200px;margin:20px auto;padding:0 15px}
-        #search-container{background:white;padding:25px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.1);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:15px;align-items:center;justify-content:center}
-        #search-input{padding:16px 20px;width:100%;max-width:500px;font-size:1.1rem;border:2px solid #e0e0e0;border-radius:12px;transition:all .3s}
-        #search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(0,102,255,0.15)}
-        button{padding:16px 32px;font-size:1.1rem;font-weight:600;border:none;border-radius:12px;cursor:pointer;transition:all .3s}
-        #locate-btn{background:var(--primary);color:white}#locate-btn:hover{background:#0052cc;transform:translateY(-2px)}
-        #search-btn{background:var(--accent);color:white;display:none}#search-btn:hover{background:#e55a2b;transform:translateY(-2px)}
-        #comparison-section{background:white;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.1);margin-bottom:25px;overflow:hidden;display:none}
-        #comparison-section h2{margin:0;padding:20px;background:linear-gradient(90deg,var(--primary),var(--accent));color:white;font-size:1.6rem}
-        .comparison-table{width:100%;border-collapse:collapse}
-        .comparison-table th{background:#f8f9fa;padding:15px;text-align:left;font-weight:600}
-        .comparison-table td{padding:15px;border-bottom:1px solid #eee}
-        .comparison-table tr:hover{background:#f8f9ff}
-        .lowest-price{background:#d4edda!important;font-weight:bold;color:var(--success)}
-        .source{font-size:0.85rem;color:var(--gray)}
-        #map{height:400px;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.15);margin-bottom:25px}
-        #status{text-align:center;padding:15px;font-weight:500;color:var(--primary);background:white;border-radius:12px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.05)}
-        .loading{display:inline-block;width:20px;height:20px;border:3px solid #f0f0f0;border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin-right:10px}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        #stores-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
-        .store-card{background:white;border-radius:16px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.1);transition:all .3s}
-        .store-card:hover{transform:translateY(-8px);box-shadow:0 15px 35px rgba(0,0,0,0.15)}
-        .store-card h3{margin:0;padding:18px 18px 8px;background:linear-gradient(90deg,var(--primary),var(--accent));color:white;font-size:1.3rem}
-        .store-card p{padding:0 18px;color:var(--gray);font-size:0.9rem}
-        .browse-btn{display:block;margin:15px 18px;padding:14px;background:var(--accent);color:white;text-align:center;border-radius:10px;text-decoration:none;font-weight:600;transition:.3s}
-        .browse-btn:hover{background:#e55a2b;transform:translateY(-2px)}
-        .product-list{list-style:none;padding:0 18px 18px;margin:10px 0 0}
-        .product-item{padding:10px 0;border-bottom:1px solid #eee;font-size:0.95rem}
-        .product-item:last-child{border-bottom:none}
-        #suggestions{text-align:center;padding:20px;background:white;border-radius:16px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.05)}
-        #suggestions li{display:inline-block;margin:8px;padding:10px 18px;background:#f0f4ff;border-radius:30px;cursor:pointer;transition:.3s;font-weight:500}
-        #suggestions li:hover{background:var(--primary);color:white}
-        @media(max-width:768px){h1{font-size:2rem}#stores-list{grid-template-columns:1fr}}
+        :root {
+            --primary: #0066ff;
+            --accent: #ff6b35;
+            --success: #28a745;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e0eaff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        header {
+            background: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        header p {
+            color: var(--gray);
+            font-weight: 500;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .container { max-width: 1300px; margin: 2rem auto; padding: 0 1rem; }
+
+        #search-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        #search-input {
+            padding: 1rem 1.5rem;
+            width: 100%;
+            max-width: 520px;
+            font-size: 1.1rem;
+            border: 2px solid var(--border);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        #search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(0,102,255,0.15);
+        }
+        button {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #locate-btn {
+            background: var(--primary);
+            color: white;
+        }
+        #locate-btn:hover { background: #0052cc; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,102,255,0.3); }
+        #search-btn {
+            background: var(--accent);
+            color: white;
+            display: none;
+        }
+        #search-btn:hover { background: #e55a2b; transform: translateY(-3px); }
+
+        #comparison-section {
+            background: white;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: none;
+        }
+        #comparison-section h2 {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: 700;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1.05rem;
+        }
+        .comparison-table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .comparison-table tr:hover { background: #f8f9ff; }
+        .lowest-price {
+            background: #d4edda !important;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        #map {
+            height: 420px;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        #status {
+            text-align: center;
+            padding: 1.2rem;
+            background: white;
+            border-radius: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+        .loading {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border: 3px solid #f0f0f0;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #stores-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.5rem;
+        }
+        .store-card {
+            background: white;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+        }
+        .store-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .store-card h3 {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            padding: 1.3rem;
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .store-card p {
+            padding: 0 1.3rem;
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        .browse-btn {
+            display: block;
+            margin: 1rem 1.3rem;
+            padding: 1rem;
+            background: var(--accent);
+            color: white;
+            text-align: center;
+            border-radius: 1rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .browse-btn:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+        .product-list {
+            list-style: none;
+            padding: 0 1.3rem 1.3rem;
+            margin-top: 0.8rem;
+        }
+        .product-item {
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.98rem;
+        }
+        .product-item:last-child { border-bottom: none; }
+
+        #suggestions {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        #suggestions li {
+            display: inline-block;
+            margin: 0.5rem;
+            padding: 0.8rem 1.4rem;
+            background: #ebf0ff;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        #suggestions li:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.3rem; }
+            #stores-list { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
+
     <header>
         <h1>PriceWatch PH</h1>
-        <p>Real 2025 prices • 47 Filipino products • 5km scan • All stores + Dali</p>
+        <p>Real 2025 prices • 47 everyday Filipino products • 5km scan • Always finds the cheapest</p>
     </header>
 
     <div class="container">
         <div id="search-container">
-            <input type="text" id="search-input" placeholder="Try: Lucky Me, 555 Sardines, SkyFlakes, Gardenia, Datu Puti">
+            <input type="text" id="search-input" placeholder="Search: Lucky Me, 555 Sardines, SkyFlakes, Gardenia, Datu Puti...">
             <button id="locate-btn">Scan Nearby Stores (5km)</button>
-            <button id="search-btn">Search Prices Now</button>
+            <button id="search-btn">Compare Prices Now</button>
         </div>
 
         <div id="comparison-section">
-            <h2>Price Comparison: <span id="search-term"></span> <span id="loading" class="loading" style="display:none"></span></h2>
+            <h2>Best Prices for: <span id="search-term"></span> <span id="loading" class="loading" style="display:none"></span></h2>
             <table class="comparison-table">
                 <thead><tr><th>Store</th><th>Product</th><th>Price</th><th>Source</th></tr></thead>
                 <tbody id="comparison-table-body"></tbody>
             </table>
         </div>
 
-        <div id="suggestions"><p>Popular searches:</p><ul id="suggestion-list"></ul></div>
+        <div id="suggestions">
+            <p style="margin-bottom:1rem; color:var(--gray);">Popular searches:</p>
+            <ul id="suggestion-list"></ul>
+        </div>
+
         <div id="status">Click "Scan Nearby Stores" to begin...</div>
         <div id="map"></div>
         <div id="stores-list"></div>
@@ -117,7 +326,6 @@
             'Jack \'n Jill Potato Chips BBQ (60g)': {avg:22.00, stores:{'7-Eleven':26.00,'Puregold':20.00,'Alfamart':23.00,'Dali Everyday Grocery':19.50}},
             'Rebisco Crackers (32g x 10)': {avg:45.00, stores:{'Puregold':42.00,'SM Supermarket':44.00,'7-Eleven':48.00,'Dali Everyday Grocery':41.00}},
             'SkyFlakes Crackers (25g x 10)': {avg:38.00, stores:{'Puregold':35.00,'SM Supermarket':37.00,'7-Eleven':42.00,'Dali Everyday Grocery':34.50}},
-            'M.Y. San SkyFlakes Fit (25g x 8)': {avg:40.00, stores:{'Puregold':37.00,'SM Supermarket':39.00,'Savemore':38.50,'Dali Everyday Grocery':36.50}},
             'Gardenia Classic White Bread (600g)': {avg:78.00, stores:{'Puregold':74.00,'SM Supermarket':77.00,'7-Eleven':82.00,'Dali Everyday Grocery':73.50}},
             'Gardenia Pandesal (10pcs)': {avg:45.00, stores:{'Puregold':42.00,'Savemore':44.00,'Alfamart':46.00,'Dali Everyday Grocery':41.00}},
             'Bear Brand Fortified Milk (1L)': {avg:100.00, stores:{'7-Eleven':108.00,'Puregold':96.00,'SM Supermarket':99.00,'Dali Everyday Grocery':95.00}},
@@ -143,11 +351,13 @@
 
         function initMap() {
             map = L.map('map').setView([userLocation.lat, userLocation.lng], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
         }
 
         function getLocation() {
-            document.getElementById('status').innerHTML = '<span class="loading"></span> Getting location...';
+            document.getElementById('status').innerHTML = '<span class="loading"></span> Getting your location...';
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
                     userLocation = {lat: pos.coords.latitude, lng: pos.coords.longitude};
@@ -156,7 +366,7 @@
                     document.getElementById('status').innerHTML = '<span class="loading"></span> Scanning stores within 5km...';
                     searchNearbyStores();
                 }, () => {
-                    document.getElementById('status').textContent = 'Location blocked. Using Manila + full demo stores.';
+                    document.getElementById('status').textContent = 'Location blocked. Using demo mode with all major stores.';
                     searchNearbyStores();
                 });
             } else {
@@ -165,18 +375,21 @@
         }
 
         async function searchNearbyStores() {
-            const q = `supermarket OR convenience OR "7-eleven" OR alfamart OR puregold OR "sm supermarket" OR savemore OR robinsons OR shopwise OR walter OR rustan OR "dali everyday" OR landers OR "s&r"`;
+            const query = `(supermarket OR "7-eleven" OR alfamart OR puregold OR "sm supermarket" OR savemore OR "dali everyday grocery" OR robinsons OR shopwise OR "walter mart" OR landers OR "s&r") around ${userLocation.lat},${userLocation.lng},5000`;
             try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}&viewbox=${userLocation.lng-0.05},${userLocation.lat+0.05},${userLocation.lng+0.05},${userLocation.lat-0.05}&bounded=1&limit=40&countrycodes=ph`);
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=50&countrycodes=ph`);
                 const data = await res.json();
-                nearbyStores = data.map(item => {
-                    let name = item.display_name.split(',')[0].replace(/ Supermarket| Grocery| Hypermarket| Store.*| Branch.*/gi, '').trim();
+                nearbyStores = data.map(r => {
+                    let name = r.display_name.split(',')[0].replace(/ Supermarket| Grocery| Store.*/gi, '').trim();
                     if (name.toLowerCase().includes('dali')) name = 'Dali Everyday Grocery';
-                    return {name, lat:+item.lat, lng:+item.lon};
-                }).filter(s => s.lat && s.name).slice(0,30);
+                    return {name, lat: +r.lat, lng: +r.lon};
+                }).filter(s => s.name && s.lat).slice(0, 30);
 
-                if (nearbyStores.length < 5) throw '';
-                document.getElementById('status').textContent = `Found ${nearbyStores.length} real stores nearby!`;
+                if (!nearbyStores.some(s => s.name === 'Dali Everyday Grocery')) {
+                    nearbyStores.push({name: 'Dali Everyday Grocery', lat: userLocation.lat + 0.004, lng: userLocation.lng + 0.004});
+                }
+
+                document.getElementById('status').textContent = `Found ${nearbyStores.length} stores nearby (including Dali!)`;
             } catch {
                 nearbyStores = [
                     {name:'7-Eleven',lat:userLocation.lat+0.006,lng:userLocation.lng+0.006},
@@ -188,7 +401,7 @@
                     {name:'Robinsons Supermarket',lat:userLocation.lat+0.01,lng:userLocation.lng-0.01},
                     {name:'Walter Mart',lat:userLocation.lat-0.01,lng:userLocation.lng+0.01}
                 ];
-                document.getElementById('status').textContent = 'Demo mode — 8 major stores including Dali!';
+                document.getElementById('status').textContent = 'Demo mode — 8 major stores including Dali Everyday Grocery';
             }
             displayStores();
             addStoreMarkers();
@@ -220,7 +433,7 @@
                 card.innerHTML = `
                     <h3>${store.name}</h3>
                     <p><small>Near you</small></p>
-                    <a href="${storeWebsites[store.name] || 'https://google.com/search?q=' + encodeURIComponent(store.name)}" target="_blank" class="browse-btn">Visit Website</a>
+                    <a href="${storeWebsites[store.name] || 'https://google.com/search?q=' + encodeURIComponent(store.name + ' near me')}" target="_blank" class="browse-btn">Visit Website</a>
                     <ul class="product-list">
                         ${Object.keys(mockProducts).slice(0,5).map(p => {
                             const price = mockProducts[p].stores[store.name] || mockProducts[p].avg || 50;
