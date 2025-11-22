@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PriceWatch - Compare Prices in Real Time</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-search-dollar"></i>
+                    <span>PriceWatch</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#home">Home</a>
+                    <a href="#compare">Compare</a>
+                    <a href="#stores">Stores</a>
+                    <a href="#how-it-works">How It Works</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <h1>Find the Lowest Prices Near You</h1>
+                <p>Compare real-time prices from Alfamart, 7-Eleven, Dali, and more stores in your area</p>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search for products (e.g., Coke, Milk, Bread)...">
+                        <button onclick="searchProducts()">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                    <div class="location-selector">
+                        <i class="fas fa-location-dot"></i>
+                        <select id="locationSelect">
+                            <option value="manila">Manila</option>
+                            <option value="quezon-city">Quezon City</option>
+                            <option value="cebu">Cebu</option>
+                            <option value="davao">Davao</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="live-prices" class="live-prices">
+            <div class="container">
+                <h2>Live Price Comparisons</h2>
+                <div class="controls">
+                    <select id="categoryFilter" onchange="filterProducts()">
+                        <option value="all">All Categories</option>
+                        <option value="beverages">Beverages</option>
+                        <option value="snacks">Snacks</option>
+                        <option value="dairy">Dairy</option>
+                        <option value="personal-care">Personal Care</option>
+                    </select>
+                    <select id="sortBy" onchange="sortProducts()">
+                        <option value="best-price">Best Price</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="savings">Most Savings</option>
+                    </select>
+                </div>
+                
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Searching live prices...</p>
+                </div>
+
+                <div id="resultsContainer" class="results-container">
+                    <!-- Results will be populated here -->
+                </div>
+
+                <div class="popular-searches">
+                    <h3>Popular Searches:</h3>
+                    <div class="popular-tags">
+                        <span class="tag" onclick="quickSearch('Coca-Cola')">Coca-Cola</span>
+                        <span class="tag" onclick="quickSearch('Bear Brand')">Bear Brand</span>
+                        <span class="tag" onclick="quickSearch('Lays Chips')">Lays Chips</span>
+                        <span class="tag" onclick="quickSearch('Dove Shampoo')">Dove Shampoo</span>
+                        <span class="tag" onclick="quickSearch('Milk')">Milk</span>
+                        <span class="tag" onclick="quickSearch('Bread')">Bread</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="stores" class="stores-section">
+            <div class="container">
+                <h2>Supported Stores</h2>
+                <div class="stores-grid">
+                    <div class="store-card" data-store="alfamart">
+                        <div class="store-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <h3>Alfamart</h3>
+                        <p>Everyday low prices</p>
+                        <div class="store-info">
+                            <span class="product-count">500+ products</span>
+                            <span class="status open">Open 24/7</span>
+                        </div>
+                    </div>
+                    <div class="store-card" data-store="seven-eleven">
+                        <div class="store-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <h3>7-Eleven</h3>
+                        <p>Convenience store chain</p>
+                        <div class="store-info">
+                            <span class="product-count">300+ products</span>
+                            <span class="status open">Fresh food available</span>
+                        </div>
+                    </div>
+                    <div class="store-card" data-store="dali">
+                        <div class="store-icon">
+                            <i class="fas fa-basket-shopping"></i>
+                        </div>
+                        <h3>Dali</h3>
+                        <p>Discount supermarket</p>
+                        <div class="store-info">
+                            <span class="product-count">800+ products</span>
+                            <span class="status open">Lowest prices</span>
+                        </div>
+                    </div>
+                    <div class="store-card" data-store="indomaret">
+                        <div class="store-icon">
+                            <i class="fas fa-martini-glass"></i>
+                        </div>
+                        <h3>Indomaret</h3>
+                        <p>Leading minimarket</p>
+                        <div class="store-info">
+                            <span class="product-count">600+ products</span>
+                            <span class="status open">Nationwide</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 PriceWatch. Compare prices and save money!</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
