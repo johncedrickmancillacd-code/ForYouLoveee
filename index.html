@@ -3,154 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PriceWatch - Compare Prices in Real Time</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>PriceWatch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #search-input {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+        #locate-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        #stores-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .store-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .store-card h3 {
+            margin-top: 0;
+        }
+        .product-list {
+            list-style: none;
+            padding: 0;
+        }
+        .product-item {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .comparison-section {
+            margin-top: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .comparison-table th {
+            background-color: #f2f2f2;
+        }
+        .lowest-price {
+            color: green;
+            font-weight: bold;
+        }
+        #status {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav>
-            <div class="nav-container">
-                <div class="logo">
-                    <i class="fas fa-search-dollar"></i>
-                    <span>PriceWatch</span>
-                </div>
-                <div class="nav-links">
-                    <a href="#home">Home</a>
-                    <a href="#compare">Compare</a>
-                    <a href="#stores">Stores</a>
-                    <a href="#how-it-works">How It Works</a>
-                </div>
-            </div>
-        </nav>
+        <h1>PriceWatch</h1>
+        <p>Compare prices of goods in nearby stores</p>
     </header>
 
-    <main>
-        <section id="home" class="hero">
-            <div class="container">
-                <h1>Find the Lowest Prices Near You</h1>
-                <p>Compare real-time prices from Alfamart, 7-Eleven, Dali, and more stores in your area</p>
-                
-                <div class="search-container">
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Search for products (e.g., Coke, Milk, Bread)...">
-                        <button onclick="searchProducts()">
-                            <i class="fas fa-search"></i> Search
-                        </button>
-                    </div>
-                    <div class="location-selector">
-                        <i class="fas fa-location-dot"></i>
-                        <select id="locationSelect">
-                            <option value="manila">Manila</option>
-                            <option value="quezon-city">Quezon City</option>
-                            <option value="cebu">Cebu</option>
-                            <option value="davao">Davao</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <div id="search-container">
+        <input type="text" id="search-input" placeholder="Search for a product (e.g., Milk)">
+        <button id="locate-btn">Get My Location and Find Stores</button>
+    </div>
 
-        <section id="live-prices" class="live-prices">
-            <div class="container">
-                <h2>Live Price Comparisons</h2>
-                <div class="controls">
-                    <select id="categoryFilter" onchange="filterProducts()">
-                        <option value="all">All Categories</option>
-                        <option value="beverages">Beverages</option>
-                        <option value="snacks">Snacks</option>
-                        <option value="dairy">Dairy</option>
-                        <option value="personal-care">Personal Care</option>
-                    </select>
-                    <select id="sortBy" onchange="sortProducts()">
-                        <option value="best-price">Best Price</option>
-                        <option value="name">Name A-Z</option>
-                        <option value="savings">Most Savings</option>
-                    </select>
-                </div>
-                
-                <div id="loading" class="loading hidden">
-                    <div class="spinner"></div>
-                    <p>Searching live prices...</p>
-                </div>
+    <div id="map"></div>
 
-                <div id="resultsContainer" class="results-container">
-                    <!-- Results will be populated here -->
-                </div>
+    <div id="status"></div>
 
-                <div class="popular-searches">
-                    <h3>Popular Searches:</h3>
-                    <div class="popular-tags">
-                        <span class="tag" onclick="quickSearch('Coca-Cola')">Coca-Cola</span>
-                        <span class="tag" onclick="quickSearch('Bear Brand')">Bear Brand</span>
-                        <span class="tag" onclick="quickSearch('Lays Chips')">Lays Chips</span>
-                        <span class="tag" onclick="quickSearch('Dove Shampoo')">Dove Shampoo</span>
-                        <span class="tag" onclick="quickSearch('Milk')">Milk</span>
-                        <span class="tag" onclick="quickSearch('Bread')">Bread</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <div id="stores-list"></div>
 
-        <section id="stores" class="stores-section">
-            <div class="container">
-                <h2>Supported Stores</h2>
-                <div class="stores-grid">
-                    <div class="store-card" data-store="alfamart">
-                        <div class="store-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <h3>Alfamart</h3>
-                        <p>Everyday low prices</p>
-                        <div class="store-info">
-                            <span class="product-count">500+ products</span>
-                            <span class="status open">Open 24/7</span>
-                        </div>
-                    </div>
-                    <div class="store-card" data-store="seven-eleven">
-                        <div class="store-icon">
-                            <i class="fas fa-store"></i>
-                        </div>
-                        <h3>7-Eleven</h3>
-                        <p>Convenience store chain</p>
-                        <div class="store-info">
-                            <span class="product-count">300+ products</span>
-                            <span class="status open">Fresh food available</span>
-                        </div>
-                    </div>
-                    <div class="store-card" data-store="dali">
-                        <div class="store-icon">
-                            <i class="fas fa-basket-shopping"></i>
-                        </div>
-                        <h3>Dali</h3>
-                        <p>Discount supermarket</p>
-                        <div class="store-info">
-                            <span class="product-count">800+ products</span>
-                            <span class="status open">Lowest prices</span>
-                        </div>
-                    </div>
-                    <div class="store-card" data-store="indomaret">
-                        <div class="store-icon">
-                            <i class="fas fa-martini-glass"></i>
-                        </div>
-                        <h3>Indomaret</h3>
-                        <p>Leading minimarket</p>
-                        <div class="store-info">
-                            <span class="product-count">600+ products</span>
-                            <span class="status open">Nationwide</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+    <div id="comparison-section" class="comparison-section" style="display: none;">
+        <h2>Price Comparison for <span id="search-term"></span></h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Store</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="comparison-table-body"></tbody>
+        </table>
+    </div>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 PriceWatch. Compare prices and save money!</p>
-        </div>
-    </footer>
+    <script>
+        // Replace with your actual Google Maps API key
+        const GOOGLE_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY_HERE'; // User needs to replace this
 
-    <script src="script.js"></script>
+        // Mock data for stores and products (since real price APIs aren't publicly available for these stores)
+        // In a real app, you'd integrate with store APIs if available, or use a database.
+        // Here, we simulate prices for common products.
+        const mockProducts = [
+            { name: 'Milk', prices: { '7-Eleven': 2.50, 'Alfamart': 2.30, 'Dali': 2.40 } },
+            { name: 'Bread', prices: { '7-Eleven': 1.80, 'Alfamart': 1.70, 'Dali': 1.75 } },
+            { name: 'Eggs', prices: { '7-Eleven': 3.00, 'Alfamart': 2.90, 'Dali': 2.95 } },
+            { name: 'Water Bottle', prices: { '7-Eleven': 1.00, 'Alfamart': 0.90, 'Dali': 0.95 } },
+            { name: 'Chips', prices: { '7-Eleven': 1.50, 'Alfamart': 1.40, 'Dali': 1.45 } },
+            // Add more products as needed
+        ];
+
+        // Mock store data will be populated based on nearby stores found
+        let nearbyStores = [];
+        let map;
+        let userLocation;
+
+        // Load Google Maps API
+        function loadGoogleMaps() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&libraries=places`;
+            script.async = true;
+            script.defer = true;
+            script.onload = initMap;
+            document.head.appendChild(script);
+        }
+
+        // Initialize map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 0, lng: 0 },
+                zoom: 2
+            });
+        }
+
+        // Get user location
+        function getLocation() {
+            if (navigator.geolocation) {
+                document.getElementById('status').textContent = 'Locating...';
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById('status').textContent = 'Geolocation is not supported by this browser.';
+            }
+        }
+
+        // Handle location success
+        function showPosition(position) {
+            userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            document.getElementById('status').textContent = 'Location found! Searching for nearby stores...';
+
+            map.setCenter(userLocation);
+            map.setZoom(14);
+
+            // Add user marker
+            new google.maps.Marker({
+                position: userLocation,
+                map: map,
+                title: 'Your Location'
+            });
+
+            // Search for nearby convenience stores
+            searchNearbyStores();
+        }
+
+        // Handle location error
+        function showError(error) {
+            let message = 'An error occurred.';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = 'User denied the request for Geolocation.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = 'Location information is unavailable.';
+                    break;
+                case error.TIMEOUT:
+                    message = 'The request to get user location timed out.';
+                    break;
+            }
+            document.getElementById('status').textContent = message;
+        }
+
+        // Search for nearby stores using Google Places API
+        function searchNearbyStores() {
+            const request = {
+                location: userLocation,
+                radius: 5000, // 5km radius
+                keyword: 'convenience store', // Searches for 7-Eleven, Alfamart, etc.
+                type: 'convenience_store'
+            };
+
+            const placesService = new google.maps.places.PlacesService(map);
+            placesService.nearbySearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    nearbyStores = results.slice(0, 10); // Limit to 10 stores
+                    displayStores();
+                    addStoreMarkers(results);
+                } else {
+                    document.getElementById('status').textContent = 'No nearby stores found.';
+                }
+            });
+        }
+
+        // Add markers for stores on the map
+        function addStoreMarkers(stores) {
+            stores.forEach(store => {
+                new google.maps.Marker({
+                    position: store.geometry.location,
+                    map: map,
+                    title: store.name
+                });
+            });
+        }
+
+        // Display list of stores with mock products
+        function displayStores() {
+            const storesList = document.getElementById('stores-list');
+            storesList.innerHTML = '';
+
+            nearbyStores.forEach(store => {
+                const storeCard = document.createElement('div');
+                storeCard.className = 'store-card';
+
+                const storeName = document.createElement('h3');
+                storeName.textContent = store.name;
+                storeCard.appendChild(storeName);
+
+                const address = document.createElement('p');
+                address.textContent = `Address: ${store.vicinity}`;
+                storeCard.appendChild(address);
+
+                const productList = document.createElement('ul');
+                productList.className = 'product-list';
+
+                mockProducts.forEach(product => {
+                    const productItem = document.createElement('li');
+                    productItem.className = 'product-item';
+                    // Assign random price variation for realism (base on mock prices)
+                    const basePrice = product.prices[store.name] || Object.values(product.prices)[Math.floor(Math.random() * Object.keys(product.prices).length)];
+                    const variedPrice = (basePrice + (Math.random() - 0.5) * 0.2).toFixed(2); // +/- 10% variation
+                    productItem.textContent = `${product.name}: $${variedPrice}`;
+                    productList.appendChild(productItem);
+                });
+
+                storeCard.appendChild(productList);
+                storesList.appendChild(storeCard);
+            });
+        }
+
+        // Handle product search and show comparison
+        function searchProduct() {
+            const query = document.getElementById('search-input').value.trim().toLowerCase();
+            if (!query || nearbyStores.length === 0) return;
+
+            const matchingProduct = mockProducts.find(p => p.name.toLowerCase() === query);
+            if (!matchingProduct) {
+                alert('Product not found in mock data.');
+                return;
+            }
+
+            const comparisonSection = document.getElementById('comparison-section');
+            const searchTerm = document.getElementById('search-term');
+            const tableBody = document.getElementById('comparison-table-body');
+            tableBody.innerHTML = '';
+
+            searchTerm.textContent = matchingProduct.name;
+            let prices = [];
+
+            nearbyStores.forEach(store => {
+                // Use mock price with variation
+                const basePrice = matchingProduct.prices[store.name] || Object.values(matchingProduct.prices)[Math.floor(Math.random() * Object.keys(matchingProduct.prices).length)];
+                const price = (basePrice + (Math.random() - 0.5) * 0.2).toFixed(2);
+                prices.push({ store: store.name, price: parseFloat(price) });
+
+                const row = document.createElement('tr');
+                const storeCell = document.createElement('td');
+                storeCell.textContent = store.name;
+                const priceCell = document.createElement('td');
+                priceCell.textContent = `$${price}`;
+                row.appendChild(storeCell);
+                row.appendChild(priceCell);
+                tableBody.appendChild(row);
+            });
+
+            // Highlight lowest price
+            const lowestPrice = Math.min(...prices.map(p => p.price));
+            tableBody.querySelectorAll('tr').forEach(row => {
+                const priceCell = row.querySelector('td:nth-child(2)');
+                if (parseFloat(priceCell.textContent.replace('$', '')) === lowestPrice) {
+                    priceCell.classList.add('lowest-price');
+                }
+            });
+
+            comparisonSection.style.display = 'block';
+        }
+
+        // Event listeners
+        document.getElementById('locate-btn').addEventListener('click', getLocation);
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchProduct();
+            }
+        });
+
+        // Load Google Maps on page load
+        window.addEventListener('load', loadGoogleMaps);
+    </script>
 </body>
 </html>
