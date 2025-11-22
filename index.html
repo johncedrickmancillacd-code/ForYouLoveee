@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PriceWatch - Compare Prices Across Stores</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-search-dollar"></i>
+                    <span>PriceWatch</span>
+                </div>
+                <div class="location-selector">
+                    <i class="fas fa-location-dot"></i>
+                    <select id="locationSelect">
+                        <option value="">Select Location</option>
+                        <option value="manila">Manila</option>
+                        <option value="quezon-city">Quezon City</option>
+                        <option value="cebu">Cebu</option>
+                        <option value="davao">Davao</option>
+                    </select>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#compare" class="nav-link">Compare Prices</a></li>
+                    <li><a href="#stores" class="nav-link">Stores</a></li>
+                    <li><a href="#products" class="nav-link">All Products</a></li>
+                    <li><a href="#map" class="nav-link">Store Map</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Smart Shopping Starts Here</h1>
+                <p>Compare real-time prices from Alfamart, 7-Eleven, Dali, and more stores near you</p>
+                <div class="search-box">
+                    <input type="text" id="productSearch" placeholder="Search for products, brands, or categories..." onkeypress="handleSearchKeypress(event)">
+                    <button onclick="performSearch()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                <div class="location-prompt" id="locationPrompt">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Select your location to see nearby stores and accurate prices</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="quick-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalStores">0</div>
+                    <div class="stat-label">Stores Nearby</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalProducts">0</div>
+                    <div class="stat-label">Products Tracked</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="avgSavings">0%</div>
+                    <div class="stat-label">Average Savings</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="priceUpdates">0</div>
+                    <div class="stat-label">Price Updates Today</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured">
+        <div class="container">
+            <h2>Today's Best Deals</h2>
+            <div class="products-grid" id="featuredProducts">
+                <!-- Products loaded by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Price Comparison Section -->
+    <section id="compare" class="comparison">
+        <div class="container">
+            <h2>Compare Prices in Real-Time</h2>
+            <div class="search-results-header" id="searchResultsHeader" style="display: none;">
+                <h3>Search Results for "<span id="searchQuery"></span>"</h3>
+                <button onclick="clearSearch()" class="clear-search">Clear Search</button>
+            </div>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Category:</label>
+                    <select id="categoryFilter" onchange="filterProducts()">
+                        <option value="all">All Categories</option>
+                        <option value="beverages">Beverages</option>
+                        <option value="snacks">Snacks</option>
+                        <option value="dairy">Dairy</option>
+                        <option value="personal-care">Personal Care</option>
+                        <option value="frozen">Frozen Foods</option>
+                        <option value="bakery">Bakery</option>
+                        <option value="household">Household</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Store:</label>
+                    <select id="storeFilter" onchange="filterProducts()">
+                        <option value="all">All Stores</option>
+                        <option value="alfamart">Alfamart</option>
+                        <option value="seven-eleven">7-Eleven</option>
+                        <option value="dali">Dali</option>
+                        <option value="indomaret">Indomaret</option>
+                        <option value="puregold">Puregold</option>
+                        <option value="robinsons">Robinsons Supermarket</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Sort by:</label>
+                    <select id="sortFilter" onchange="sortProducts()">
+                        <option value="name">Name</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="savings">Best Savings</option>
+                    </select>
+                </div>
+            </div>
+            <div class="products-container" id="productsContainer">
+                <!-- Products loaded by JavaScript -->
+            </div>
+            <div class="load-more" id="loadMoreContainer">
+                <button onclick="loadMoreProducts()" class="load-more-btn">
+                    <i class="fas fa-refresh"></i> Load More Products
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Products Section -->
+    <section id="products" class="all-products">
+        <div class="container">
+            <h2>Browse All Products</h2>
+            <div class="category-grid" id="categoryGrid">
+                <!-- Categories loaded by JavaScript -->
+            </div>
+            <div class="store-products" id="storeProducts">
+                <!-- Store-specific products loaded by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Store Map Section -->
+    <section id="map" class="store-map">
+        <div class="container">
+            <h2>Find Stores Near You</h2>
+            <div class="map-container">
+                <div id="storeMap"></div>
+                <div class="store-list" id="storeList">
+                    <!-- Store list loaded by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stores Section -->
+    <section id="stores" class="stores">
+        <div class="container">
+            <h2>Supported Stores</h2>
+            <div class="stores-grid" id="storesGrid">
+                <!-- Stores loaded by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>PriceWatch</h3>
+                    <p>Your smart shopping companion in the Philippines</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#compare">Compare Prices</a></li>
+                        <li><a href="#products">All Products</a></li>
+                        <li><a href="#map">Store Map</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Stores</h4>
+                    <ul>
+                        <li><a href="#" data-store="alfamart">Alfamart</a></li>
+                        <li><a href="#" data-store="seven-eleven">7-Eleven</a></li>
+                        <li><a href="#" data-store="dali">Dali</a></li>
+                        <li><a href="#" data-store="indomaret">Indomaret</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Report Price</a></li>
+                        <li><a href="#">Add Store</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PriceWatch Philippines. All prices in Philippine Peso (₱).</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>Loading prices and stores...</p>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
