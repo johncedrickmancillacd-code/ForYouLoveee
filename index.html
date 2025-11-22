@@ -51,7 +51,7 @@
 <body>
     <header>
         <h1>PriceWatch PH</h1>
-        <p>Real 2025 prices • 47 products • 5km scan • DALI ALWAYS INCLUDED</p>
+        <p>Real 2025 prices • 47 Filipino products • 5km scan • All stores + Dali</p>
     </header>
 
     <div class="container">
@@ -139,71 +139,61 @@
         };
 
         const suggestions = Object.keys(mockProducts);
-        let map, userLocation = null, nearbyStores = [];
+        let map, userLocation = {lat:14.5995, lng:120.9842}, nearbyStores = [];
 
-        function initMap(lat = 14.5995, lng = 120.9842) {
-            map = L.map('map').setView([lat, lng], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap contributors'}).addTo(map);
+        function initMap() {
+            map = L.map('map').setView([userLocation.lat, userLocation.lng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map);
         }
 
         function getLocation() {
             document.getElementById('status').innerHTML = '<span class="loading"></span> Getting location...';
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
-                    userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                    document.getElementById('status').innerHTML = '<span class="loading"></span> Scanning 5km...';
+                    userLocation = {lat: pos.coords.latitude, lng: pos.coords.longitude};
                     map.setView([userLocation.lat, userLocation.lng], 13);
                     L.marker([userLocation.lat, userLocation.lng]).addTo(map).bindPopup('You are here').openPopup();
+                    document.getElementById('status').innerHTML = '<span class="loading"></span> Scanning stores within 5km...';
                     searchNearbyStores();
                 }, () => {
-                    document.getElementById('status').textContent = 'Location blocked. Using demo with DALI guaranteed.';
-                    userLocation = { lat: 14.5995, lng: 120.9842 };
+                    document.getElementById('status').textContent = 'Location blocked. Using Manila + full demo stores.';
                     searchNearbyStores();
                 });
             } else {
-                userLocation = { lat: 14.5995, lng: 120.9842 };
                 searchNearbyStores();
             }
         }
 
         async function searchNearbyStores() {
-            const query = `(7-Eleven OR Alfamart OR "Family Mart" OR MiniStop OR Lawson OR "Circle K" OR "Dali Everyday Grocery" OR Dali OR Puregold OR "Robinsons Supermarket" OR "SM Supermarket" OR Savemore OR Shopwise OR "Walter Mart" OR Rustan OR "S&R" OR "Metro Gaisano" OR Gaisano OR Landers) around ${userLocation.lat},${userLocation.lng},5000`;
+            const q = `supermarket OR convenience OR "7-eleven" OR alfamart OR puregold OR "sm supermarket" OR savemore OR robinsons OR shopwise OR walter OR rustan OR "dali everyday" OR landers OR "s&r"`;
             try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=50&countrycodes=ph`);
-                const results = await response.json();
-
-                nearbyStores = results.map(r => {
-                    let name = r.display_name.split(',')[0].replace(/ Supermarket| Hypermarket| Grocery| Store| Branch.*/gi, '').trim();
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}&viewbox=${userLocation.lng-0.05},${userLocation.lat+0.05},${userLocation.lng+0.05},${userLocation.lat-0.05}&bounded=1&limit=40&countrycodes=ph`);
+                const data = await res.json();
+                nearbyStores = data.map(item => {
+                    let name = item.display_name.split(',')[0].replace(/ Supermarket| Grocery| Hypermarket| Store.*| Branch.*/gi, '').trim();
                     if (name.toLowerCase().includes('dali')) name = 'Dali Everyday Grocery';
-                    return {name, lat: +r.lat, lng: +r.lon, vicinity: r.display_name};
-                }).filter(s => s.name && s.lat).slice(0, 30);
+                    return {name, lat:+item.lat, lng:+item.lon};
+                }).filter(s => s.lat && s.name).slice(0,30);
 
-                if (!nearbyStores.some(s => s.name === 'Dali Everyday Grocery')) {
-                    nearbyStores.push({name: 'Dali Everyday Grocery', lat: userLocation.lat + 0.004, lng: userLocation.lng + 0.004});
-                }
-
-                displayStores();
-                addStoreMarkers();
-                document.getElementById('search-btn').style.display = 'inline-block';
-                document.getElementById('status').textContent = `Found ${nearbyStores.length} stores — DALI INCLUDED!`;
-                showSuggestions();
+                if (nearbyStores.length < 5) throw '';
+                document.getElementById('status').textContent = `Found ${nearbyStores.length} real stores nearby!`;
             } catch {
                 nearbyStores = [
-                    {name:'7-Eleven',lat:userLocation.lat+0.005,lng:userLocation.lng+0.005},
-                    {name:'Puregold',lat:userLocation.lat-0.005,lng:userLocation.lng-0.005},
-                    {name:'SM Supermarket',lat:userLocation.lat+0.01,lng:userLocation.lng},
-                    {name:'Alfamart',lat:userLocation.lat,lng:userLocation.lng+0.01},
-                    {name:'Savemore',lat:userLocation.lat-0.01,lng:userLocation.lng},
+                    {name:'7-Eleven',lat:userLocation.lat+0.006,lng:userLocation.lng+0.006},
+                    {name:'Puregold',lat:userLocation.lat-0.006,lng:userLocation.lng-0.006},
+                    {name:'SM Supermarket',lat:userLocation.lat+0.008,lng:userLocation.lng},
+                    {name:'Alfamart',lat:userLocation.lat,lng:userLocation.lng+0.008},
+                    {name:'Savemore',lat:userLocation.lat-0.008,lng:userLocation.lng},
                     {name:'Dali Everyday Grocery',lat:userLocation.lat+0.004,lng:userLocation.lng+0.004},
-                    {name:'Robinsons Supermarket',lat:userLocation.lat+0.008,lng:userLocation.lng-0.008},
-                    {name:'Walter Mart',lat:userLocation.lat-0.008,lng:userLocation.lng+0.008}
+                    {name:'Robinsons Supermarket',lat:userLocation.lat+0.01,lng:userLocation.lng-0.01},
+                    {name:'Walter Mart',lat:userLocation.lat-0.01,lng:userLocation.lng+0.01}
                 ];
-                displayStores();
-                addStoreMarkers();
-                document.getElementById('search-btn').style.display = 'inline-block';
-                document.getElementById('status').textContent = 'Demo mode — DALI Everyday Grocery is here!';
-                showSuggestions();
+                document.getElementById('status').textContent = 'Demo mode — 8 major stores including Dali!';
             }
+            displayStores();
+            addStoreMarkers();
+            document.getElementById('search-btn').style.display = 'inline-block';
+            showSuggestions();
         }
 
         function addStoreMarkers() {
@@ -213,7 +203,7 @@
         function showSuggestions() {
             const list = document.getElementById('suggestion-list');
             list.innerHTML = '';
-            suggestions.slice(0, 18).forEach(p => {
+            suggestions.slice(0,18).forEach(p => {
                 const li = document.createElement('li');
                 li.textContent = p;
                 li.onclick = () => { document.getElementById('search-input').value = p; searchProduct(); };
@@ -234,7 +224,7 @@
                     <ul class="product-list">
                         ${Object.keys(mockProducts).slice(0,5).map(p => {
                             const price = mockProducts[p].stores[store.name] || mockProducts[p].avg || 50;
-                            return `<li class="product-item"><strong>${p}:</strong> ₱${(price + (Math.random()-0.5)*2).toFixed(2)}</li>`;
+                            return `<li class="product-item"><strong>${p}:</strong> ₱${(price + (Math.random()-0.5)*3).toFixed(2)}</li>`;
                         }).join('')}
                     </ul>`;
                 container.appendChild(card);
@@ -243,38 +233,31 @@
 
         function searchProduct() {
             const query = document.getElementById('search-input').value.trim().toLowerCase();
-            if (!query || nearbyStores.length === 0) return;
-
+            if (!query) return;
             const section = document.getElementById('comparison-section');
             const term = document.getElementById('search-term');
             const body = document.getElementById('comparison-table-body');
             const loading = document.getElementById('loading');
-
             body.innerHTML = ''; loading.style.display = 'inline-block'; section.style.display = 'block'; term.textContent = query;
-
-            const foundProduct = Object.keys(mockProducts).find(p => p.toLowerCase().includes(query)) || query;
-
+            const found = Object.keys(mockProducts).find(p => p.toLowerCase().includes(query)) || query;
             nearbyStores.forEach(store => {
-                const price = mockProducts[foundProduct]?.stores[store.name] || mockProducts[foundProduct]?.avg || 50;
+                const price = mockProducts[found]?.stores[store.name] || mockProducts[found]?.avg || 50;
                 const row = document.createElement('tr');
-                row.innerHTML = `<td><strong>${store.name}</strong></td><td>${foundProduct.split(' (')[0]}</td><td>₱${price.toFixed(2)}</td><td class="source">2025 Price</td>`;
+                row.innerHTML = `<td><strong>${store.name}</strong></td><td>${found.split(' (')[0]}</td><td>₱${price.toFixed(2)}</td><td class="source">2025 Price</td>`;
                 body.appendChild(row);
             });
-
-            const prices = Array.from(body.querySelectorAll('td:nth-child(3)')).map(td => parseFloat(td.textContent.slice(1)));
-            const lowest = Math.min(...prices);
+            const prices = [...body.querySelectorAll('td:nth-child(3)')].map(td => parseFloat(td.textContent.slice(1)));
+            const min = Math.min(...prices);
             body.querySelectorAll('tr').forEach(tr => {
-                if (parseFloat(tr.cells[2].textContent.slice(1)) === lowest) tr.cells[2].classList.add('lowest-price');
+                if (parseFloat(tr.cells[2].textContent.slice(1)) === min) tr.cells[2].classList.add('lowest-price');
             });
-
             loading.style.display = 'none';
-            section.scrollIntoView({behavior: 'smooth'});
+            section.scrollIntoView({behavior:'smooth'});
         }
 
         document.getElementById('locate-btn').onclick = getLocation;
         document.getElementById('search-btn').onclick = searchProduct;
-        document.getElementById('search-input').addEventListener('keypress', e => { if (e.key === 'Enter') searchProduct(); });
-
+        document.getElementById('search-input').addEventListener('keypress', e => {if(e.key==='Enter') searchProduct();});
         window.onload = () => { initMap(); showSuggestions(); };
     </script>
 </body>
