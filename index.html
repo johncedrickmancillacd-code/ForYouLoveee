@@ -51,17 +51,16 @@
 <body>
     <header>
         <h1>PriceWatch PH</h1>
-        <p>Real 2025 prices • 47 everyday products • 5km scan • Works offline too</p>
+        <p>Real 2025 prices • 47 everyday Filipino products • 5km scan • Best deals first</p>
     </header>
 
     <div class="container">
         <div id="search-container">
-            <input type="text" id="search-input" placeholder="Search: Lucky Me, 555, SkyFlakes, Gardenia, Datu Puti...">
-            <button id="locate-btn">Scan Nearby Stores</button>
-            <button id="search-btn">Search Prices</button>
+            <input type="text" id="search-input" placeholder="Try: Lucky Me, 555 Sardines, SkyFlakes, Gardenia, Datu Puti">
+            <button id="locate-btn">Scan Nearby Stores (5km)</button>
+            <button id="search-btn">Search Prices Now</button>
         </div>
 
-        <!-- PRICE COMPARISON (ALWAYS AT TOP) -->
         <div id="comparison-section">
             <h2>Price Comparison: <span id="search-term"></span> <span id="loading" class="loading" style="display:none"></span></h2>
             <table class="comparison-table">
@@ -153,53 +152,51 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
                     userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                    document.getElementById('status').innerHTML = '<span class="loading"></span> Found! Scanning stores within 5km...';
+                    document.getElementById('status').innerHTML = '<span class="loading"></span> Scanning stores within 5km...';
                     map.setView([userLocation.lat, userLocation.lng], 13);
-                    L.marker([userLocation.lat, userLocation.lng], {icon: L.divIcon({className: 'my-location', html: 'You', iconSize: [30, 30]})}).addTo(map).bindPopup('You are here').openPopup();
+                    L.marker([userLocation.lat, userLocation.lng]).addTo(map).bindPopup('You are here').openPopup();
                     searchNearbyStores();
                 }, () => {
-                    document.getElementById('status').textContent = 'Location blocked. Using Manila (demo mode)';
+                    document.getElementById('status').textContent = 'Location blocked. Using Manila as default.';
                     userLocation = { lat: 14.5995, lng: 120.9842 };
                     searchNearbyStores();
                 });
             } else {
-                document.getElementById('status').textContent = 'Geolocation not supported. Using Manila.';
                 userLocation = { lat: 14.5995, lng: 120.9842 };
                 searchNearbyStores();
             }
         }
 
         async function searchNearbyStores() {
-            const lat = userLocation.lat;
-            const lng = userLocation.lng;
-            const query = `supermarket OR convenience OR "7-eleven" OR alfamart OR puregold OR "sm supermarket" OR savemore OR robinsons OR shopwise OR walter OR rustan OR landers OR "s&r"`;
-            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&bounded=1&viewbox=${lng-0.05},${lat+0.05},${lng+0.05},${lat-0.05}&limit=30&countrycodes=ph`;
-
+            const query = `(7-Eleven OR Alfamart OR "Family Mart" OR MiniStop OR Lawson OR "Circle K" OR "Dali Everyday Grocery" OR Puregold OR "Robinsons Supermarket" OR "SM Supermarket" OR Savemore OR Shopwise OR "Walter Mart" OR Rustan OR "S&R" OR "Metro Gaisano" OR Gaisano OR Landers) around ${userLocation.lat},${userLocation.lng},5000`;
             try {
-                const res = await fetch(url);
-                const data = await res.json();
-                nearbyStores = data.map(item => ({
-                    name: item.display_name.split(',')[0].replace(/ Supermarket| Grocery| Hypermarket| Branch.*/gi, '').trim() || 'Local Store',
-                    lat: parseFloat(item.lat),
-                    lng: parseFloat(item.lon),
-                    vicinity: item.display_name
-                })).filter(s => s.lat && s.lng).slice(0, 25);
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=50&countrycodes=ph`);
+                const results = await response.json();
 
-                if (nearbyStores.length === 0) throw new Error("No stores");
+                nearbyStores = results.map(r => ({
+                    name: r.display_name.split(',')[0].replace(/ Supermarket| Hypermarket| Grocery| Store| Branch.*/gi, '').trim() || 'Local Store',
+                    lat: parseFloat(r.lat),
+                    lng: parseFloat(r.lon),
+                    vicinity: r.display_name
+                })).filter(s => s.lat && s.lng && s.name.length > 1).slice(0, 30);
+
+                if (nearbyStores.length === 0) throw '';
 
                 displayStores();
                 addStoreMarkers();
                 document.getElementById('search-btn').style.display = 'inline-block';
-                document.getElementById('status').textContent = `Found ${nearbyStores.length} stores nearby! Type a product to compare prices.`;
+                document.getElementById('status').textContent = `Found ${nearbyStores.length} stores within 5km! Ready to compare prices.`;
                 showSuggestions();
-            } catch (e) {
-                document.getElementById('status').textContent = 'Using demo stores (no internet/location)';
+            } catch {
+                document.getElementById('status').textContent = 'No stores found. Using demo mode...';
                 nearbyStores = [
-                    {name: '7-Eleven', lat: userLocation.lat+0.01, lng: userLocation.lng+0.01},
-                    {name: 'Puregold', lat: userLocation.lat-0.01, lng: userLocation.lng-0.01},
-                    {name: 'SM Supermarket', lat: userLocation.lat+0.02, lng: userLocation.lng},
-                    {name: 'Alfamart', lat: userLocation.lat, lng: userLocation.lng+0.02},
-                    {name: 'Savemore', lat: userLocation.lat-0.02, lng: userLocation.lng}
+                    {name:'7-Eleven',lat:userLocation.lat+0.005,lng:userLocation.lng+0.005},
+                    {name:'Puregold',lat:userLocation.lat-0.005,lng:userLocation.lng-0.005},
+                    {name:'SM Supermarket',lat:userLocation.lat+0.01,lng:userLocation.lng},
+                    {name:'Alfamart',lat:userLocation.lat,lng:userLocation.lng+0.01},
+                    {name:'Savemore',lat:userLocation.lat-0.01,lng:userLocation.lng},
+                    {name:'Robinsons Supermarket',lat:userLocation.lat+0.008,lng:userLocation.lng-0.008},
+                    {name:'Walter Mart',lat:userLocation.lat-0.008,lng:userLocation.lng+0.008}
                 ];
                 displayStores();
                 addStoreMarkers();
@@ -210,21 +207,17 @@
 
         function addStoreMarkers() {
             nearbyStores.forEach(store => {
-                L.marker([store.lat, store.lng]).addTo(map)
-                    .bindPopup(`<b>${store.name}</b><br>Nearby store`);
+                L.marker([store.lat, store.lng]).addTo(map).bindPopup(`<b>${store.name}</b>`);
             });
         }
 
         function showSuggestions() {
             const list = document.getElementById('suggestion-list');
             list.innerHTML = '';
-            suggestions.slice(0, 15).forEach(p => {
+            suggestions.slice(0, 18).forEach(p => {
                 const li = document.createElement('li');
                 li.textContent = p;
-                li.onclick = () => {
-                    document.getElementById('search-input').value = p;
-                    searchProduct();
-                };
+                li.onclick = () => { document.getElementById('search-input').value = p; searchProduct(); };
                 list.appendChild(li);
             });
         }
@@ -237,60 +230,57 @@
                 card.className = 'store-card';
                 card.innerHTML = `
                     <h3>${store.name}</h3>
-                    <p><small>Nearby store</small></p>
-                    <a href="${storeWebsites[store.name] || 'https://www.google.com/search?q=' + encodeURIComponent(store.name + ' Philippines')}" target="_blank" class="browse-btn">Visit Website</a>
+                    <p><small>Near you</small></p>
+                    <a href="${storeWebsites[store.name] || 'https://google.com/search?q=' + encodeURIComponent(store.name + ' near me')}" target="_blank" class="browse-btn">Visit Website</a>
                     <ul class="product-list">
-                        ${Object.keys(mockProducts).slice(0, 5).map(prod => {
-                            const price = mockProducts[prod].stores[store.name] || mockProducts[prod].avg || 50;
-                            const varied = (price + (Math.random() - 0.5) * 3).toFixed(2);
-                            return `<li class="product-item"><strong>${prod}:</strong> ₱${varied}</li>`;
+                        ${Object.keys(mockProducts).slice(0,5).map(p => {
+                            const price = mockProducts[p].stores[store.name] || mockProducts[p].avg || 50;
+                            return `<li class="product-item"><strong>${p}:</strong> ₱${(price + (Math.random()-0.5)*2).toFixed(2)}</li>`;
                         }).join('')}
-                    </ul>
-                `;
+                    </ul>`;
                 container.appendChild(card);
             });
         }
 
         function searchProduct() {
-            const query = document.getElementById('search-input').value.trim();
+            const query = document.getElementById('search-input').value.trim().toLowerCase();
             if (!query || nearbyStores.length === 0) return;
 
             const section = document.getElementById('comparison-section');
             const term = document.getElementById('search-term');
             const body = document.getElementById('comparison-table-body');
             const loading = document.getElementById('loading');
+
             body.innerHTML = '';
             loading.style.display = 'inline-block';
             section.style.display = 'block';
             term.textContent = query;
 
-            const found = Object.keys(mockProducts).find(p => p.toLowerCase().includes(query.toLowerCase())) || query;
+            const foundProduct = Object.keys(mockProducts).find(p => p.toLowerCase().includes(query)) || query;
 
             nearbyStores.forEach(store => {
-                const price = mockProducts[found]?.stores[store.name] || mockProducts[found]?.avg || 50;
+                const price = mockProducts[foundProduct]?.stores[store.name] || mockProducts[foundProduct]?.avg || 50;
                 const row = document.createElement('tr');
-                row.innerHTML = `<td><strong>${store.name}</strong></td><td>${found.split(' (')[0]}</td><td>₱${price.toFixed(2)}</td><td class="source">2025 Price</td>`;
+                row.innerHTML = `<td><strong>${store.name}</strong></td><td>${foundProduct.split(' (')[0]}</td><td>₱${price.toFixed(2)}</td><td class="source">2025 Price</td>`;
                 body.appendChild(row);
             });
 
-            const prices = [...body.querySelectorAll('td:nth-child(3)')].map(td => parseFloat(td.textContent.slice(1)));
-            const min = Math.min(...prices);
+            const prices = Array.from(body.querySelectorAll('tr td:nth-child(3)')).map(td => parseFloat(td.textContent.slice(1)));
+            const lowest = Math.min(...prices);
             body.querySelectorAll('tr').forEach(tr => {
-                if (parseFloat(tr.cells[2].textContent.slice(1)) === min) {
+                if (parseFloat(tr.cells[2].textContent.slice(1)) === lowest) {
                     tr.cells[2].classList.add('lowest-price');
                 }
             });
 
             loading.style.display = 'none';
-            section.scrollIntoView({ behavior: 'smooth' });
+            section.scrollIntoView({behavior: 'smooth'});
         }
 
-        // Event Listeners
         document.getElementById('locate-btn').onclick = getLocation;
         document.getElementById('search-btn').onclick = searchProduct;
         document.getElementById('search-input').addEventListener('keypress', e => { if (e.key === 'Enter') searchProduct(); });
 
-        // Start
         window.onload = () => {
             initMap();
             showSuggestions();
