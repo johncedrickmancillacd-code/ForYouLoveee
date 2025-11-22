@@ -90,16 +90,55 @@
         };
 
         const mockProducts = {
-            'Lucky Me! Pancit Canton (65g)': { avg: 12.00, stores: { '7-Eleven': 14.00, 'Alfamart': 13.00, 'Puregold': 11.00, 'Robinsons Supermarket': 12.00, 'SM Supermarket': 12.50, 'Dali Everyday Grocery': 10.00, 'Savemore': 11.50, 'Shopwise': 11.75, 'Walter Mart': 12.25, 'Rustan\'s': 13.50, 'S&R': 12.00, 'Metro Gaisano': 11.50, 'Gaisano': 11.00 } },
-            'Colgate Toothpaste (120g)': { avg: 45.00, stores: { '7-Eleven': 48.00, 'Alfamart': 46.00, 'Puregold': 43.00, 'Robinsons Supermarket': 45.00, 'SM Supermarket': 44.00, 'Dali Everyday Grocery': 42.00, 'Savemore': 43.50, 'Shopwise': 44.25, 'Walter Mart': 45.50, 'Rustan\'s': 47.00, 'S&R': 45.00 } },
-            'Tide Powder (1kg)': { avg: 80.00, stores: { 'Puregold': 78.00, 'SM Supermarket': 79.00, 'Shopwise': 78.50, 'Dali Everyday Grocery': 75.00 } },
-            'Bear Brand Fortified (1L)': { avg: 100.00, stores: { '7-Eleven': 105.00, 'Puregold': 98.00, 'SM Supermarket': 99.00 } },
-            'Century Tuna Flakes (180g)': { avg: 45.00, stores: { '7-Eleven': 48.00, 'Puregold': 44.00, 'SM Supermarket': 44.50 } },
-            'Coca-Cola (1.5L)': { avg: 68.00, stores: { '7-Eleven': 72.00, 'Puregold': 66.00, 'SM Supermarket': 68.50, 'MiniStop': 70.00 } },
-            'Safeguard Soap (115g)': { avg: 25.00, stores: { '7-Eleven': 27.00, 'Puregold': 23.00, 'Alfamart': 26.00, 'Dali Everyday Grocery': 22.00 } },
-            'Selecta Cornetto': { avg: 40.00, stores: { '7-Eleven': 45.00, 'MiniStop': 41.00, 'Puregold': 38.00, 'SM Supermarket': 39.00 } },
-            'Del Monte Pineapple Chunks (432g)': { avg: 75.00, stores: { 'Puregold': 73.00, 'SM Supermarket': 74.00, 'Robinsons Supermarket': 75.00 } },
-            'Magnolia Fresh Milk (1L)': { avg: 114.00, stores: { '7-Eleven': 118.00, 'Puregold': 112.00, 'SM Supermarket': 114.50, 'Savemore': 113.00 } }
+            'Lucky Me! Pancit Canton (65g)': { avg: 12.00, stores: { '7-Eleven': 14.00, 'Alfamart': 13.00, 'Puregold': 11.00, 'Robinsons Supermarket': 12.00, 'SM Supermarket': 12.50, 'Dali Everyday Grocery': 10.00 } },
+            'Lucky Me! Beef Mami (65g)': { avg: 12.50, stores: { '7-Eleven': 14.50, 'Puregold': 11.50, 'Alfamart': 13.00 } },
+            'Lucky Me! Chicken Sotanghon (40g)': { avg: 11.00, stores: { '7-Eleven': 13.00, 'Puregold': 10.00 } },
+            'Nissin Yakisoba Spicy Chicken (115g)': { avg: 18.00, stores: { '7-Eleven': 22.00, 'Puregold': 16.00 } },
+            'Nissin Cup Noodles Beef (40g)': { avg: 22.00, stores: { '7-Eleven': 26.00, 'Puregold': 20.00 } },
+            'Payless Xtra Big Pancit Canton (130g)': { avg: 18.00, stores: { 'Puregold': 16.00, 'SM Supermarket': 17.50 } },
+            'Century Tuna Flakes in Oil (180g)': { avg: 45.00, stores: { '7-Eleven': 49.00, 'Puregold': 43.00, 'SM Supermarket': 44.50 } },
+            '555 Sardines Green (155g)': { avg: 22.00, stores: { 'Puregold': 20.00, 'SM Supermarket': 21.50, 'Savemore': 21.00 } },
+            '555 Tuna Afritada (155g)': { avg: 24.00, stores: { 'Puregold': 22.00, '7-Eleven': 27.00 } },
+            'Argentina Corned Beef (150g)': { avg: 52.00, stores: { 'Puregold': 49.00, 'SM Supermarket': 51.00 } },
+            'Purefoods Corned Beef (150g)': { avg: 68.00, stores: { 'Puregold': 65.00, 'SM Supermarket': 67.00 } },
+            'Mega Sardines Red (155g)': { avg: 19.00, stores: { 'Puregold': 17.50, 'Savemore': 18.00 } },
+            'Libby\'s Vienna Sausage (130g)': { avg: 48.00, stores: { '7-Eleven': 52.00, 'Puregold': 46.00 } },
+            'CDO Luncheon Meat (210g)': { avg: 72.00, stores: { 'Puregold': 69.00, 'SM Supermarket': 71.00 } },
+            'Safeguard White Soap (115g)': { avg: 25.00, stores: { '7-Eleven': 28.00, 'Puregold': 23.00, 'Alfamart': 26.00 } },
+            'Safeguard Lemon Fresh (115g)': { avg: 25.00, stores: { 'Puregold': 23.00, 'SM Supermarket': 24.50 } },
+            'Dove Beauty Bar (90g)': { avg: 65.00, stores: { 'SM Supermarket': 63.00, 'Rustan\'s': 68.00 } },
+            'Palmolive Shampoo (180ml)': { avg: 85.00, stores: { 'Puregold': 82.00, 'SM Supermarket': 84.00 } },
+            'Head & Shoulders Cool Menthol (180ml)': { avg: 135.00, stores: { 'Puregold': 129.00, 'SM Supermarket': 132.00 } },
+            'Joy Dishwashing Liquid (250ml)': { avg: 38.00, stores: { 'Puregold': 35.00, 'Alfamart': 37.00 } },
+            'Surf Powder Blossom Fresh (1kg)': { avg: 95.00, stores: { 'Puregold': 92.00, 'SM Supermarket': 94.00 } },
+            'Tide Powder (1kg)': { avg: 80.00, stores: { 'Puregold': 78.00, 'SM Supermarket': 79.00 } },
+            'Bingo Corned Beef Flavor Chips (90g)': { avg: 28.00, stores: { '7-Eleven': 32.00, 'Puregold': 26.00 } },
+            'Piattos Cheese (85g)': { avg: 30.00, stores: { '7-Eleven': 34.00, 'Puregold': 28.00 } },
+            'Nova Country Cheddar (78g)': { avg: 25.00, stores: { 'Puregold': 23.00, 'SM Supermarket': 24.50 } },
+            'Oishi Prawn Crackers (90g)': { avg: 32.00, stores: { '7-Eleven': 36.00, 'Puregold': 30.00 } },
+            'Clover Chips Barbecue (85g)': { avg: 26.00, stores: { 'Puregold': 24.00, 'Alfamart': 25.00 } },
+            'Jack \'n Jill Potato Chips BBQ (60g)': { avg: 22.00, stores: { '7-Eleven': 26.00, 'Puregold': 20.00 } },
+            'Rebisco Crackers (32g x 10)': { avg: 45.00, stores: { 'Puregold': 42.00, 'SM Supermarket': 44.00 } },
+            'SkyFlakes Crackers (25g x 10)': { avg: 38.00, stores: { 'Puregold': 35.00, '7-Eleven': 42.00 } },
+            'Gardenia Classic White Bread (600g)': { avg: 78.00, stores: { 'Puregold': 75.00, 'SM Supermarket': 77.00 } },
+            'Gardenia Pandesal (10pcs)': { avg: 45.00, stores: { 'Puregold': 42.00, '7-Eleven': 48.00 } },
+            'M.Y. San SkyFlakes Fit (25g x 8)': { avg: 42.00, stores: { 'Puregold': 39.00, 'SM Supermarket': 41.00 } },
+            'Bear Brand Fortified Milk (1L)': { avg: 100.00, stores: { '7-Eleven': 105.00, 'Puregold': 98.00 } },
+            'Alaska Evaporada (370ml)': { avg: 48.00, stores: { 'Puregold': 45.00, 'SM Supermarket': 47.00 } },
+            'Angel Evaporated Milk (410ml)': { avg: 52.00, stores: { 'Puregold': 49.00, 'Savemore': 51.00 } },
+            'UFC Banana Catsup (320g)': { avg: 38.00, stores: { 'Puregold': 35.00, 'SM Supermarket': 37.00 } },
+            'Jufran Banana Catsup (320g)': { avg: 36.00, stores: { 'Puregold': 33.00, 'Alfamart': 35.00 } },
+            'Silver Swan Soy Sauce (1L)': { avg: 58.00, stores: { 'Puregold': 55.00, 'SM Supermarket': 57.00 } },
+            'Datu Puti Vinegar (1L)': { avg: 48.00, stores: { 'Puregold': 45.00, 'SM Supermarket': 47.00 } },
+            'Golden Fiesta Cooking Oil (1L)': { avg: 135.00, stores: { 'Puregold': 129.00, 'SM Supermarket': 132.00 } },
+            'Bingo Cooking Oil (1L)': { avg: 125.00, stores: { 'Puregold': 119.00, 'Savemore': 122.00 } },
+            'Del Monte Pineapple Juice (1L)': { avg: 95.00, stores: { 'Puregold': 89.00, 'SM Supermarket': 92.00 } },
+            'Zesto Juice Drink (200ml x 10)': { avg: 85.00, stores: { 'Puregold': 79.00, 'Savemore': 82.00 } },
+            'Nestle Fresh Milk (1L)': { avg: 115.00, stores: { 'SM Supermarket': 112.00, 'Rustan\'s': 118.00 } },
+            'Magnolia Fresh Milk (1L)': { avg: 114.00, stores: { '7-Eleven': 118.00, 'Puregold': 112.00 } },
+            'San Marino Corned Tuna (180g)': { avg: 48.00, stores: { 'Puregold': 45.00, 'SM Supermarket': 47.00 } },
+            'Young\'s Town Sardines (155g)': { avg: 20.00, stores: { 'Puregold': 18.00, 'Savemore': 19.00 } },
+            'Ligo Sardines Green (155g)': { avg: 23.00, stores: { 'Puregold': 21.00, 'Alfamart': 22.00 } }
         };
 
         const suggestions = Object.keys(mockProducts).slice(0, 12);
@@ -122,7 +161,7 @@
         function initMap(lat = 14.5995, lng = 120.9842) {
             map = L.map('map').setView([lat, lng], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
+                attribution: '© OpenStreetMap contributors'
             }).addTo(map);
         }
 
