@@ -145,11 +145,9 @@
         let map, userLocation = {lat:14.5995, lng:120.9842};
         let nearbyStores = [];
 
-        function initMap() {
+        function initMap(){
             map = L.map('map').setView([userLocation.lat, userLocation.lng], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         }
 
         function getLocation() {
@@ -162,7 +160,7 @@
                     document.getElementById('status').innerHTML = '<span class="loading"></span> Scanning real stores within 5km...';
                     searchNearbyStores();
                 }, () => {
-                    document.getElementById('status').textContent = 'Location access denied. Using Manila demo.';
+                    document.getElementById('status').textContent = 'Location blocked. Using Manila demo.';
                     searchNearbyStores();
                 });
             } else {
@@ -299,10 +297,6 @@
             } catch (error) { console.error(error); }
             return null;
         }
-
-        document.getElementById('locate-btn').addEventListener('click', getLocation);
-        document.getElementById('search-btn').addEventListener('click', searchProduct);
-        document.getElementById('search-input').addEventListener('keypress', e => { if (e.key === 'Enter') searchProduct(); });
 
         window.addEventListener('load', () => {
             initMap();
