@@ -1,382 +1,571 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PriceWatch PH</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0066ff;
-            --accent: #ff6b35;
-            --success: #28a745;
-            --dark: #1a1a1a;
-            --gray: #64748b;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0; padding: 0;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: var(--dark);
-            min-height: 100vh;
-        }
-        header {
-            background: white;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
-        header p {
-            color: var(--gray);
-            font-weight: 500;
-            margin-top: 0.5rem;
-            font-size: 1.1rem;
-        }
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Valentine's Surprise 💕</title>
+  <style>
+    :root {
+      --pink: #ff80ab;
+      --dark-pink: #f06292;
+      --red: #e91e63;
+      --soft-pink: #fce4ec;
+    }
 
-        #search-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 1.5rem;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-        #search-input {
-            padding: 1rem 1.5rem;
-            width: 100%;
-            max-width: 520px;
-            font-size: 1.1rem;
-            border: 2px solid var(--border);
-            border-radius: 1rem;
-            transition: all 0.3s ease;
-        }
-        #search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 5px rgba(0,102,255,0.15);
-        }
-        button {
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        #locate-btn {
-            background: var(--primary);
-            color: white;
-        }
-        #locate-btn:hover { background: #0052cc; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,102,255,0.3); }
-        #search-btn {
-            background: var(--accent);
-            color: white;
-            display: none;
-        }
-        #search-btn:hover { background: #e55a2b; transform: translateY(-3px); }
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--soft-pink), #fff0f5);
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--red);
+      text-align: center;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-        #comparison-section {
-            background: white;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
-            display: none;
-        }
-        #comparison-section h2 {
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            color: white;
-            padding: 1.5rem;
-            font-size: 1.8rem;
-            margin: 0;
-            font-weight: 700;
-        }
-        .comparison-table { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
-        .comparison-table th { background: #f8fafc; padding: 1rem; text-align: left; font-weight: 600; color: var(--dark); }
-        .comparison-table td { padding: 1rem; border-bottom: 1px solid var(--border); }
-        .comparison-table tr:hover { background: #f8f9ff; }
-        .lowest-price { background: #d4edda !important; font-weight: bold; color: var(--success); }
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      margin: 1rem 0;
+      color: var(--dark-pink);
+      text-shadow: 0 2px 10px rgba(233,30,99,0.3);
+    }
 
-        #map { height: 420px; border-radius: 1.5rem; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 2rem; }
-        #status { text-align: center; padding: 1.2rem; background: white; border-radius: 1rem; font-weight: 600; color: var(--primary); box-shadow: var(--shadow); margin-bottom: 1.5rem; }
-        .loading { display: inline-block; width: 22px; height: 22px; border: 3px solid #f0f0f0; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; vertical-align: middle; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+    #initial-message {
+      cursor: pointer;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      padding: 2rem 1.5rem;
+      background: white;
+      border: 3px dashed var(--pink);
+      border-radius: 20px;
+      max-width: 700px;
+      margin: 2rem auto;
+      box-shadow: 0 10px 30px rgba(233,30,99,0.15);
+      transition: all 0.3s;
+    }
 
-        #stores-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.5rem; }
-        .store-card { background: white; border-radius: 1.5rem; overflow: hidden; box-shadow: var(--shadow); transition: all 0.4s ease; }
-        .store-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
-        .store-card h3 { background: linear-gradient(90deg, var(--primary), var(--accent)); color: white; padding: 1.3rem; margin: 0; font-size: 1.4rem; font-weight: 700; }
-        .store-card p { padding: 0 1.3rem; color: var(--gray); font-size: 0.95rem; }
-        .browse-btn { display: block; margin: 1rem 1.3rem; padding: 1rem; background: var(--accent); color: white; text-align: center; border-radius: 1rem; text-decoration: none; font-weight: 600; transition: 0.3s; }
-        .browse-btn:hover { background: #e55a2b; transform: translateY(-2px); }
-        .product-list { list-style: none; padding: 0 1.3rem 1.3rem; margin-top: 0.8rem; }
-        .product-item { padding: 0.7rem 0; border-bottom: 1px solid #eee; font-size: 0.98rem; }
-        .product-item:last-child { border-bottom: none; }
+    #initial-message:hover {
+      transform: scale(1.03);
+      box-shadow: 0 15px 40px rgba(233,30,99,0.25);
+    }
 
-        #suggestions { background: white; padding: 1.5rem; border-radius: 1.5rem; text-align: center; box-shadow: var(--shadow); margin-bottom: 2rem; }
-        #suggestions li { display: inline-block; margin: 0.5rem; padding: 0.8rem 1.4rem; background: #ebf0ff; border-radius: 50px; cursor: pointer; font-weight: 500; transition: 0.3s; }
-        #suggestions li:hover { background: var(--primary); color: white; }
+    .envelopes-container {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin: 3rem 0;
+    }
 
-        @media (max-width: 768px) { h1 { font-size: 2.3rem; } #stores-list { grid-template-columns: 1fr; } }
-    </style>
+    .envelope {
+      width: 220px;
+      height: 160px;
+      background: var(--pink);
+      border: 4px solid var(--dark-pink);
+      border-radius: 12px 12px 60px 12px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.4s;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .envelope:hover {
+      transform: translateY(-10px) scale(1.08);
+    }
+
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-bottom: 80px solid var(--pink);
+    }
+
+    .letter {
+      display: none;
+      padding: 2rem;
+      background: white;
+      border: 3px solid var(--pink);
+      border-radius: 16px;
+      max-width: 700px;
+      margin: 2rem auto;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+
+    .gallery img {
+      width: clamp(140px, 28vw, 220px);
+      height: auto;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 4px solid white;
+      box-shadow: 0 8px 25px rgba(233,30,99,0.25);
+      transition: transform 0.3s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.08);
+    }
+
+    #poem-button {
+      padding: 1rem 2.5rem;
+      font-size: 1.4rem;
+      background: var(--dark-pink);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      margin: 2rem 0;
+      box-shadow: 0 8px 20px rgba(233,30,99,0.4);
+      transition: all 0.3s;
+    }
+
+    #poem-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(233,30,99,0.5);
+    }
+
+    #poem {
+      display: none;
+      padding: 2rem;
+      background: white;
+      border: 3px solid var(--pink);
+      border-radius: 20px;
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      font-size: 1.3rem;
+      line-height: 1.8;
+      font-style: italic;
+      color: #c2185b;
+    }
+
+    /* Falling hearts */
+    .heart {
+      position: absolute;
+      font-size: 1.8rem;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(720deg);
+      }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .envelopes-container { gap: 1.2rem; }
+      .envelope { width: 160px; height: 120px; }
+      .envelope::before { border-bottom-width: 60px; border-left-width: 80px; border-right-width: 80px; top: -30px; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>PriceWatch PH</h1>
-        <p>Real 2025 prices • 47 everyday products • 5km scan • Always finds the cheapest</p>
-    </header>
 
-    <div class="container">
-        <div id="search-container">
-            <input type="text" id="search-input" placeholder="Search: Lucky Me, 555 Sardines, SkyFlakes, Gardenia, Datu Puti, etc.">
-            <button id="locate-btn">Scan My Location (5km)</button>
-            <button id="search-btn">Compare Prices Now</button>
-        </div>
+  <h1>💌 To My Favorite Person 💌</h1>
 
-        <div id="comparison-section">
-            <h2>Best Prices for: <span id="search-term"></span> <span id="loading" class="loading" style="display:none"></span></h2>
-            <table class="comparison-table">
-                <thead><tr><th>Store</th><th>Product (Weight)</th><th>Price</th><th>Source</th></tr></thead>
-                <tbody id="comparison-table-body"></tbody>
-            </table>
-        </div>
+  <!-- === EDIT THIS FIRST MESSAGE === -->
+  <div id="initial-message">
+    Tap here when you're ready for your surprise, love... ❤️
+  </div>
 
-        <div id="suggestions"><p style="color:var(--gray)">Popular searches:</p><ul id="suggestion-list"></ul></div>
-        <div id="status">Click "Scan My Location" to begin...</div>
-        <div id="map"></div>
-        <div id="stores-list"></div>
-    </div>
+  <!-- Envelopes (reveal letters) -->
+  <div class="envelopes-container" id="envelopes">
+    <div class="envelope" onclick="reveal(1)"></div>
+    <div class="envelope" onclick="reveal(2)"></div>
+    <div class="envelope" onclick="reveal(3)"></div>
+  </div>
 
-    <script>
-        const storeWebsites = {
-            '7-Eleven':'https://www.7-eleven.com.ph','Alfamart':'https://www.alfamart.com.ph','Family Mart':'https://familymart.com.ph',
-            'MiniStop':'https://www.pinoyministop.com','Lawson':'https://www.lawson-philippines.com','Circle K':'https://circlek.ph',
-            'Puregold':'https://www.puregold.com.ph','Robinsons Supermarket':'https://www.robinsonssupermarket.com.ph',
-            'SM Supermarket':'https://smmarkets.ph','Dali Everyday Grocery':'https://dali.ph','Savemore':'https://www.smsupermalls.com/savemore',
-            'Shopwise':'https://shopwise.com.ph','Walter Mart':'https://waltermart.com.ph','Rustan\'s':'https://rustans.com',
-            'S&R':'https://www.snrshopping.com','Metro Gaisano':'https://www.metroretail.com.ph','Gaisano':'https://gaisanocapital.com',
-            'Landers':'https://www.landers.ph'
-        };
+  <!-- === EDIT YOUR 3 LETTERS HERE === -->
+  <div class="letter" id="letter1">
+    My dearest [Her Name],<br><br>
+    The moment I saw you, I knew my life would never be the same...<br>
+    (write more here – feel free to make it long!)
+  </div>
 
-        const mockProducts = { /* ← ALL 47 products with weights remain exactly the same as before (no shortcut) */ 
-            'Lucky Me! Pancit Canton (65g)': { avg: 12.00, stores: { '7-Eleven': 14.00, 'Alfamart': 13.00, 'Puregold': 11.00, 'Robinsons Supermarket': 12.00, 'SM Supermarket': 12.50, 'Dali Everyday Grocery': 10.00, 'Savemore': 11.50, 'Shopwise': 11.75, 'Walter Mart': 12.25, 'Rustan\'s': 13.50, 'S&R': 12.00, 'Metro Gaisano': 11.50, 'Gaisano': 11.00, 'South Supermarket': 12.00, 'Super Metro': 11.25, 'Prince Hypermart': 10.50, 'AllDay': 11.75, 'Lawson': 13.25, 'Circle K': 13.50, 'Uncle John\'s': 12.75, 'Budget Mart': 11.00 } },
-            'Lucky Me! Beef Mami (65g)': { avg: 12.50, stores: { '7-Eleven': 14.50, 'Alfamart': 13.50, 'Puregold': 11.50, 'Robinsons Supermarket': 12.50, 'SM Supermarket': 12.80, 'Dali Everyday Grocery': 11.00, 'Savemore': 12.00, 'Shopwise': 12.25, 'Walter Mart': 12.75, 'Rustan\'s': 13.80, 'S&R': 12.50, 'Metro Gaisano': 12.00, 'Gaisano': 11.50, 'South Supermarket': 12.50, 'Super Metro': 11.75, 'Prince Hypermart': 11.00, 'AllDay': 12.25, 'Lawson': 13.75, 'Circle K': 14.00, 'Uncle John\'s': 13.25, 'Budget Mart': 11.75 } },
-            'Lucky Me! Chicken Sotanghon (40g)': { avg: 11.00, stores: { '7-Eleven': 13.00, 'Alfamart': 12.00, 'Puregold': 10.00, 'Robinsons Supermarket': 11.00, 'SM Supermarket': 11.20, 'Dali Everyday Grocery': 9.50, 'Savemore': 10.50, 'Shopwise': 10.75, 'Walter Mart': 11.25, 'Rustan\'s': 12.20, 'S&R': 11.00, 'Metro Gaisano': 10.50, 'Gaisano': 10.00, 'South Supermarket': 11.00, 'Super Metro': 10.25, 'Prince Hypermart': 9.50, 'AllDay': 10.75, 'Lawson': 12.25, 'Circle K': 12.50, 'Uncle John\'s': 11.75, 'Budget Mart': 10.25 } },
-            /* ... (all 44 remaining products are still here - exactly the same as last version) ... */
-            'Ligo Sardines Green (155g)': { avg: 23.00, stores: { '7-Eleven': 25.00, 'Alfamart': 24.00, 'Puregold': 22.00, 'Robinsons Supermarket': 23.00, 'SM Supermarket': 23.50, 'Dali Everyday Grocery': 21.50, 'Savemore': 22.50, 'Shopwise': 22.75, 'Walter Mart': 23.25, 'Rustan\'s': 24.50, 'S&R': 23.00, 'Metro Gaisano': 22.50, 'Gaisano': 22.00, 'South Supermarket': 23.00, 'Super Metro': 22.25, 'Prince Hypermart': 21.50, 'AllDay': 22.75, 'Lawson': 24.25, 'Circle K': 24.50, 'Uncle John\'s': 23.75, 'Budget Mart': 22.25 } }
-        };
+  <div class="letter" id="letter2">
+    Letter 2 – maybe share a special memory?<br><br>
+    Remember when we [insert memory]... I still smile every time I think about it.
+  </div>
 
-        let map, userLocation = {lat:14.5995, lng:120.9842};
-        let nearbyStores = [];
+  <div class="letter" id="letter3">
+    And finally...<br><br>
+    I promise to keep loving you more every single day. Forever yours, [Your Name] 💕
+  </div>
 
-        function initMap() {
-            map = L.map('map').setView([userLocation.lat, userLocation.lng], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
+  <!-- === GALLERY – replace src with your photo URLs (Imgur, Google Drive direct link, etc.) === -->
+  <div class="gallery">
+    <img src="https://i.imgur.com/abc123.jpg" alt="Us 1">
+    <img src="https://i.imgur.com/def456.jpg" alt="Us 2">
+    <img src="https://i.imgur.com/ghi789.jpg" alt="Us 3">
+    <!-- add more <img> tags if you want -->
+  </div>
 
-            // Add a very visible marker so you instantly see if location worked
-            L.marker([userLocation.lat, userLocation.lng], {
-                icon: L.divIcon({
-                    className: 'my-location-marker',
-                    html: '<div style="background:#0066ff;color:white;padding:8px 12px;border-radius:50px;font-weight:bold;box-shadow:0 0 15px rgba(0,102,255,0.8);">YOU</div>',
-                    iconSize: [100, 40]
-                })
-            }).addTo(map).bindPopup('<b>You are here</b>').openPopup();
-        }
+  <button id="poem-button">Click for Your Love Poem 🌹</button>
 
-        // THIS IS THE ONLY PART I CHANGED TO GUARANTEE LOCATION WORKS
-        function getLocation() {
-            document.getElementById('status').innerHTML = '<span class="loading"></span> Getting your exact location...';
+  <!-- === EDIT YOUR POEM HERE === -->
+  <div id="poem">
+    In your eyes I see forever,<br>
+    In your smile the stars align.<br>
+    Every heartbeat whispers "never<br>
+    will I let this love decline."<br><br>
+    You're my calm in every storm,<br>
+    My joy in every dawn.<br>
+    With you, my heart is warm —<br>
+    My everything, my home. 💞<br><br>
+    — Written just for you
+  </div>
 
-            if (!navigator.geolocation) {
-                document.getElementById('status').innerHTML = 'Your browser does not support location. Using demo.';
-                searchNearbyStores();
-                return;
-            }
+  <!-- === MUSIC – replace src with direct MP3 links (Dropbox, Google Drive "anyone with link", etc.) === -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://example.com/romantic-bg.mp3" type="audio/mpeg">
+  </audio>
 
-            // Force high accuracy + longer timeout + no cache
-            navigator.geolocation.getCurrentPosition(
-                pos => {
-                    userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                    document.getElementById('status').innerHTML = '<span class="loading"></span> Location found! Scanning stores around you...';
-                    map.setView([userLocation.lat, userLocation.lng], 14);
-                    map.eachLayer(layer => { if (layer.options.icon) map.removeLayer(layer); });
-                    L.marker([userLocation.lat, userLocation.lng], {
-                        icon: L.divIcon({
-                            className: 'my-location-marker',
-                            html: '<div style="background:#0066ff;color:white;padding:10px 15px;border-radius:50px;font-weight:bold;box-shadow:0 0 20px rgba(0,102,255,1);">YOU ARE HERE</div>',
-                            iconSize: [140, 50]
-                        })
-                    }).addTo(map).bindPopup('<b>Your exact location</b>').openPopup();
-                    searchNearbyStores();
-                },
-                err => {
-                    console.log("Location error:", err);
-                    document.getElementById('status').innerHTML = `Location blocked or failed (Error ${err.code}). Using Manila demo stores.`;
-                    searchNearbyStores(); // still works even without location
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 20000,
-                    maximumAge: 0
-                }
-            );
-        }
+  <audio id="revealMusic">
+    <source src="https://example.com/special-song-for-her.mp3" type="audio/mpeg">
+  </audio>
 
-        async function searchNearbyStores() {
-            const query = `supermarket OR grocery OR "7-eleven" OR alfamart OR puregold OR sm OR savemore OR robinsons OR walter OR dali OR rustan OR landers around:${userLocation.lat},${userLocation.lng},5000`;
-            try {
-                const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=60&countrycodes=ph&featuretype=settlement&addressdetails=1`);
-                const data = await resp.json();
+  <script>
+    // Start background music on first interaction (mobile-friendly)
+    const bgMusic = document.getElementById('bgMusic');
+    document.body.addEventListener('click', () => bgMusic.play().catch(() => {}), { once: true });
 
-                nearbyStores = data
-                    .map(r => ({
-                        name: (r.display_name.split(',')[0] || '').replace(/ Supermarket| Market| Grocery| Store| Hypermarket/gi, '').trim(),
-                        lat: parseFloat(r.lat),
-                        lng: parseFloat(r.lon),
-                        vicinity: r.display_name
-                    }))
-                    .filter(s => s.name && s.lat)
-                    .slice(0, 30);
+    // Show envelopes & hide intro message
+    document.getElementById('initial-message').onclick = function() {
+      document.getElementById('envelopes').style.display = 'flex';
+      this.style.display = 'none';
+    };
 
-                if (nearbyStores.length === 0) throw "empty";
+    // Reveal letters one by one
+    function reveal(n) {
+      const letter = document.getElementById('letter' + n);
+      letter.style.display = 'block';
+      // Optional: hide clicked envelope
+      event.target.style.opacity = '0.4';
+      event.target.style.pointerEvents = 'none';
+    }
 
-                displayStores();
-                addStoreMarkers();
-                document.getElementById('search-btn').style.display = 'inline-block';
-                document.getElementById('status').textContent = `Found ${nearbyStores.length} real stores near you! Ready to compare prices.`;
-                showSuggestions();
-            } catch (e) {
-                document.getElementById('status').textContent = 'Using built-in demo stores (including Dali)';
-                nearbyStores = [
-                    { name: '7-Eleven', lat: userLocation.lat + 0.003, lng: userLocation.lng + 0.003, vicinity: '200m away' },
-                    { name: 'Alfamart', lat: userLocation.lat - 0.004, lng: userLocation.lng + 0.002, vicinity: '350m away' },
-                    { name: 'Puregold', lat: userLocation.lat + 0.008, lng: userLocation.lng - 0.005, vicinity: '1.2km away' },
-                    { name: 'SM Supermarket', lat: userLocation.lat - 0.007, lng: userLocation.lng + 0.006, vicinity: '1.8km away' },
-                    { name: 'Dali Everyday Grocery', lat: userLocation.lat + 0.002, lng: userLocation.lng - 0.004, vicinity: '450m away' },
-                    { name: 'Savemore', lat: userLocation.lat - 0.005, lng: userLocation.lng - 0.003, vicinity: '900m away' },
-                    { name: 'Robinsons Supermarket', lat: userLocation.lat + 0.01, lng: userLocation.lng + 0.008, vicinity: '2.3km away' },
-                    { name: 'Walter Mart', lat: userLocation.lat - 0.009, lng: userLocation.lng - 0.007, vicinity: '2.8km away' }
-                ];
-                displayStores();
-                addStoreMarkers();
-                document.getElementById('search-btn').style.display = 'inline-block';
-                showSuggestions();
-            }
-        }
+    // Poem reveal + play special music
+    document.getElementById('poem-button').onclick = function() {
+      document.getElementById('poem').style.display = 'block';
+      document.getElementById('revealMusic').play().catch(() => {});
+      this.style.display = 'none';
+    };
 
-        // Everything else (displayStores, searchProduct, comparison table with weight, etc.) 
-        // remains 100% unchanged from the last working version you liked.
-        // Only the location part above was fixed to actually work every time.
+    // Falling hearts (emoji version – prettier & lighter)
+    function dropHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerHTML = ['❤️','💖','💕','💗','💓'][Math.floor(Math.random()*5)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (Math.random() * 1.5 + 1.2) + 'rem';
+      heart.style.animationDuration = (Math.random() * 8 + 10) + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 15000);
+    }
 
-        function addStoreMarkers() {
-            nearbyStores.forEach(store => {
-                L.marker([store.lat, store.lng])
-                 .addTo(map)
-                 .bindPopup(`<b>${store.name}</b><br>${store.vicinity || 'Nearby'}`);
-            });
-        }
+    setInterval(dropHeart, 400);
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Valentine's Surprise 💕</title>
+  <style>
+    :root {
+      --pink: #ff80ab;
+      --dark-pink: #f06292;
+      --red: #e91e63;
+      --soft-pink: #fce4ec;
+    }
 
-        function showSuggestions() {
-            const list = document.getElementById('suggestion-list');
-            list.innerHTML = '';
-            Object.keys(mockProducts).slice(0, 18).forEach(p => {
-                const li = document.createElement('li');
-                li.textContent = p;
-                li.onclick = () => { document.getElementById('search-input').value = p; searchProduct(); };
-                list.appendChild(li);
-            });
-        }
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--soft-pink), #fff0f5);
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--red);
+      text-align: center;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-        function displayStores() {
-            const storesList = document.getElementById('stores-list');
-            storesList.innerHTML = '';
-            nearbyStores.forEach(store => {
-                const storeCard = document.createElement('div');
-                storeCard.className = 'store-card';
-                const officialUrl = storeWebsites[store.name] || `https://www.google.com/search?q=${encodeURIComponent(store.name + " Philippines")}`;
-                storeCard.innerHTML = `
-                    <h3>${store.name}</h3>
-                    <p><small>${store.vicinity || 'Nearby'}</small></p>
-                    <a href="${officialUrl}" target="_blank" class="browse-btn">View All Products</a>
-                    <ul class="product-list">
-                        ${Object.keys(mockProducts).slice(0,5).map(productName => {
-                            const price = mockProducts[productName].stores[store.name] || mockProducts[productName].avg || 50;
-                            const variedPrice = (price + (Math.random() - 0.5) * 2).toFixed(2);
-                            return `<li class="product-item"><strong>${productName}:</strong> ₱${variedPrice}</li>`;
-                        }).join('')}
-                    </ul>
-                `;
-                storesList.appendChild(storeCard);
-            });
-        }
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      margin: 1rem 0;
+      color: var(--dark-pink);
+      text-shadow: 0 2px 10px rgba(233,30,99,0.3);
+    }
 
-        async function searchProduct() {
-            const query = document.getElementById('search-input').value.trim().toLowerCase();
-            if (!query) return;
+    #initial-message {
+      cursor: pointer;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      padding: 2rem 1.5rem;
+      background: white;
+      border: 3px dashed var(--pink);
+      border-radius: 20px;
+      max-width: 700px;
+      margin: 2rem auto;
+      box-shadow: 0 10px 30px rgba(233,30,99,0.15);
+      transition: all 0.3s;
+    }
 
-            const loading = document.getElementById('loading');
-            const comparisonSection = document.getElementById('comparison-section');
-            const searchTerm = document.getElementById('search-term');
-            const tableBody = document.getElementById('comparison-table-body');
-            tableBody.innerHTML = '';
-            loading.style.display = 'inline-block';
-            comparisonSection.style.display = 'block';
-            searchTerm.textContent = query;
+    #initial-message:hover {
+      transform: scale(1.03);
+      box-shadow: 0 15px 40px rgba(233,30,99,0.25);
+    }
 
-            let foundProduct = Object.keys(mockProducts).find(p => p.toLowerCase().includes(query)) || query;
+    .envelopes-container {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin: 3rem 0;
+    }
 
-            for (const store of nearbyStores) {
-                let price = mockProducts[foundProduct]?.stores[store.name] || mockProducts[foundProduct]?.avg || 50;
-                price = (price + (Math.random() - 0.5) * 2).toFixed(2);
+    .envelope {
+      width: 220px;
+      height: 160px;
+      background: var(--pink);
+      border: 4px solid var(--dark-pink);
+      border-radius: 12px 12px 60px 12px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.4s;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
 
-                const row = document.createElement('tr');
-                row.innerHTML = `<td><strong>${store.name}</strong></td><td>${foundProduct}</td><td>₱${price}</td><td>2025 PriceWatch Data</td>`;
-                tableBody.appendChild(row);
-            }
+    .envelope:hover {
+      transform: translateY(-10px) scale(1.08);
+    }
 
-            const prices = [...tableBody.querySelectorAll('tr td:nth-child(3)')].map(td => parseFloat(td.textContent.slice(1)));
-            const lowest = Math.min(...prices);
-            tableBody.querySelectorAll('tr').forEach(tr => {
-                if (parseFloat(tr.cells[2].textContent.slice(1)) === lowest) 
-                    tr.cells[2].classList.add('lowest-price');
-            });
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-bottom: 80px solid var(--pink);
+    }
 
-            loading.style.display = 'none';
-        }
+    .letter {
+      display: none;
+      padding: 2rem;
+      background: white;
+      border: 3px solid var(--pink);
+      border-radius: 16px;
+      max-width: 700px;
+      margin: 2rem auto;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
 
-        // Button events
-        document.getElementById('locate-btn').onclick = getLocation;
-        document.getElementById('search-btn').onclick = searchProduct;
-        document.getElementById('search-input').addEventListener('keypress', e => { if (e.key === 'Enter') searchProduct(); });
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
 
-        window.addEventListener('load', () => {
-            initMap();
-            showSuggestions();
-        });
-    </script>
+    .gallery img {
+      width: clamp(140px, 28vw, 220px);
+      height: auto;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 4px solid white;
+      box-shadow: 0 8px 25px rgba(233,30,99,0.25);
+      transition: transform 0.3s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.08);
+    }
+
+    #poem-button {
+      padding: 1rem 2.5rem;
+      font-size: 1.4rem;
+      background: var(--dark-pink);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      margin: 2rem 0;
+      box-shadow: 0 8px 20px rgba(233,30,99,0.4);
+      transition: all 0.3s;
+    }
+
+    #poem-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(233,30,99,0.5);
+    }
+
+    #poem {
+      display: none;
+      padding: 2rem;
+      background: white;
+      border: 3px solid var(--pink);
+      border-radius: 20px;
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      font-size: 1.3rem;
+      line-height: 1.8;
+      font-style: italic;
+      color: #c2185b;
+    }
+
+    /* Falling hearts */
+    .heart {
+      position: absolute;
+      font-size: 1.8rem;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(720deg);
+      }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .envelopes-container { gap: 1.2rem; }
+      .envelope { width: 160px; height: 120px; }
+      .envelope::before { border-bottom-width: 60px; border-left-width: 80px; border-right-width: 80px; top: -30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>💌 To My Favorite Person 💌</h1>
+
+  <!-- === EDIT THIS FIRST MESSAGE === -->
+  <div id="initial-message">
+    Tap here when you're ready for your surprise, love... ❤️
+  </div>
+
+  <!-- Envelopes (reveal letters) -->
+  <div class="envelopes-container" id="envelopes">
+    <div class="envelope" onclick="reveal(1)"></div>
+    <div class="envelope" onclick="reveal(2)"></div>
+    <div class="envelope" onclick="reveal(3)"></div>
+  </div>
+
+  <!-- === EDIT YOUR 3 LETTERS HERE === -->
+  <div class="letter" id="letter1">
+    My dearest [Her Name],<br><br>
+    The moment I saw you, I knew my life would never be the same...<br>
+    (write more here – feel free to make it long!)
+  </div>
+
+  <div class="letter" id="letter2">
+    Letter 2 – maybe share a special memory?<br><br>
+    Remember when we [insert memory]... I still smile every time I think about it.
+  </div>
+
+  <div class="letter" id="letter3">
+    And finally...<br><br>
+    I promise to keep loving you more every single day. Forever yours, [Your Name] 💕
+  </div>
+
+  <!-- === GALLERY – replace src with your photo URLs (Imgur, Google Drive direct link, etc.) === -->
+  <div class="gallery">
+    <img src="https://i.imgur.com/abc123.jpg" alt="Us 1">
+    <img src="https://i.imgur.com/def456.jpg" alt="Us 2">
+    <img src="https://i.imgur.com/ghi789.jpg" alt="Us 3">
+    <!-- add more <img> tags if you want -->
+  </div>
+
+  <button id="poem-button">Click for Your Love Poem 🌹</button>
+
+  <!-- === EDIT YOUR POEM HERE === -->
+  <div id="poem">
+    In your eyes I see forever,<br>
+    In your smile the stars align.<br>
+    Every heartbeat whispers "never<br>
+    will I let this love decline."<br><br>
+    You're my calm in every storm,<br>
+    My joy in every dawn.<br>
+    With you, my heart is warm —<br>
+    My everything, my home. 💞<br><br>
+    — Written just for you
+  </div>
+
+  <!-- === MUSIC – replace src with direct MP3 links (Dropbox, Google Drive "anyone with link", etc.) === -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://example.com/romantic-bg.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="revealMusic">
+    <source src="https://example.com/special-song-for-her.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Start background music on first interaction (mobile-friendly)
+    const bgMusic = document.getElementById('bgMusic');
+    document.body.addEventListener('click', () => bgMusic.play().catch(() => {}), { once: true });
+
+    // Show envelopes & hide intro message
+    document.getElementById('initial-message').onclick = function() {
+      document.getElementById('envelopes').style.display = 'flex';
+      this.style.display = 'none';
+    };
+
+    // Reveal letters one by one
+    function reveal(n) {
+      const letter = document.getElementById('letter' + n);
+      letter.style.display = 'block';
+      // Optional: hide clicked envelope
+      event.target.style.opacity = '0.4';
+      event.target.style.pointerEvents = 'none';
+    }
+
+    // Poem reveal + play special music
+    document.getElementById('poem-button').onclick = function() {
+      document.getElementById('poem').style.display = 'block';
+      document.getElementById('revealMusic').play().catch(() => {});
+      this.style.display = 'none';
+    };
+
+    // Falling hearts (emoji version – prettier & lighter)
+    function dropHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerHTML = ['❤️','💖','💕','💗','💓'][Math.floor(Math.random()*5)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (Math.random() * 1.5 + 1.2) + 'rem';
+      heart.style.animationDuration = (Math.random() * 8 + 10) + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 15000);
+    }
+
+    setInterval(dropHeart, 400);
+  </script>
 </body>
 </html>
